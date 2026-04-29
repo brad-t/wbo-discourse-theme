@@ -244,17 +244,10 @@ h6,
   color: var(--wbo-orange);
 }
 
-// ── Admin nav pill links — tab indicator style ────────────────────────────────
+// ── Admin nav pill links ──────────────────────────────────────────────────────
 
 .nav.nav-pills li.navigation-item a.navigation-link {
   text-decoration: none !important;
-  border-radius: 0 !important;
-  border-bottom: 2px solid transparent;
-  padding-bottom: calc(0.5em - 2px);
-
-  &.active {
-    border-bottom-color: var(--wbo-orange);
-  }
 
   &:not(.active):hover {
     background: rgba(255, 255, 255, 0.08);
