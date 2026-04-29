@@ -48,9 +48,9 @@ $wbo-nav-mobile-breakpoint: 768px;
   }
 }
 
-// Sidebar-wrapper is a sibling of .d-header at body level — bump it too
-// so its top edge isn't clipped by the WBO nav.
-.sidebar-wrapper,
+// Mobile slide-in sidebar dropdown needs to sit above the WBO nav. The
+// desktop persistent sidebar must stay at its default z-index, otherwise
+// its top few px overlap the WBO bar.
 .sidebar-hamburger-dropdown {
   z-index: 1100 !important;
 }
