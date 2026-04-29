@@ -5,6 +5,7 @@
   --d-nav-pill-border-radius: 100px;
   --d-input-border-radius: 4px;
   --topic-body-width: 900px;
+  --d-nav-underline-height: 0;
 }
 
 @mixin custom-card {
@@ -244,26 +245,15 @@ h6,
   color: var(--wbo-orange);
 }
 
-// ── Nav pill reset — kill core underlines/borders everywhere ─────────────────
+// ── Nav pill links ────────────────────────────────────────────────────────────
 
-.nav-pills,
 .nav-pills a,
-.nav-pills button,
-.nav-pills li {
+.nav-pills button {
   text-decoration: none !important;
-  border-bottom: none !important;
 }
 
-.nav-pills * {
-  border-bottom: none !important;
-}
-
-// ── Admin nav pill links ──────────────────────────────────────────────────────
-
-.nav.nav-pills li.navigation-item a.navigation-link {
-  &:not(.active):hover {
-    background: rgba(255, 255, 255, 0.08);
-  }
+.nav.nav-pills li.navigation-item a.navigation-link:not(.active):hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 // ── WBO Primary Button ────────────────────────────────────────────────────────
