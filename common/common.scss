@@ -244,6 +244,25 @@ h6,
   color: var(--wbo-orange);
 }
 
+// ── Nav pill link styles ──────────────────────────────────────────────────────
+
+.nav.nav-pills .navigation-link {
+  text-decoration: none;
+
+  &.active {
+    text-decoration: none;
+  }
+
+  &:not(.active) {
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+    }
+  }
+}
+
 // ── WBO Primary Button ────────────────────────────────────────────────────────
 
 .btn-primary:not(.btn-icon, [class*="popup-menu-btn"]) {
