@@ -18,7 +18,13 @@ $wbo-nav-mobile-breakpoint: 768px;
 // visible header row so the bar doesn't show.
 
 .d-header-wrap {
-  z-index: 1003 !important;
+  // Sits above every WBO element (bar 1002, hamburger 1010, drawer 1009)
+  // so Discourse menu panels can paint above all of it.
+  z-index: 1100 !important;
+
+  // …but the bar itself shouldn't catch clicks meant for the WBO nav
+  // underneath. Panels re-enable pointer-events below.
+  pointer-events: none;
 }
 
 .d-header {
@@ -31,12 +37,14 @@ $wbo-nav-mobile-breakpoint: 768px;
     visibility: hidden;
   }
 
+  // Menu panels: visible and interactive even though their ancestors aren't.
   .menu-panel,
   .user-menu,
   .hamburger-panel,
   .sidebar-hamburger-dropdown,
   .revamped {
     visibility: visible;
+    pointer-events: auto;
   }
 }
 
