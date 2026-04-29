@@ -1,0 +1,10 @@
+.badge-card .badge-contents {
+  height: 100%;
+
+  @include custom-card;
+}
+
+.badge-card .favorite-btn {
+  right: 0.5em;
+  bottom: 0.5em;
+}

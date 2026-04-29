@@ -1,0 +1,25 @@
+.groups-boxes .group-box {
+  border-radius: 4px;
+  border: none;
+}
+
+.group-box-inner {
+  @include custom-card;
+}
+
+.container.group {
+  .user-primary-navigation,
+  .user-secondary-navigation {
+    background: var(--secondary);
+
+    @include custom-card;
+  }
+
+  .user-secondary-navigation {
+    margin-top: 0.5em;
+  }
+
+  .horizontal-overflow-nav {
+    border: none;
+  }
+}

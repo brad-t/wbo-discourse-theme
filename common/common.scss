@@ -1,0 +1,291 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap");
+
+:root {
+  --d-button-border-radius: 100px;
+  --d-nav-pill-border-radius: 100px;
+  --d-input-border-radius: 4px;
+  --topic-body-width: 900px;
+}
+
+@mixin custom-card {
+  box-sizing: border-box;
+  padding: 0.75em;
+  border-radius: 0.25em;
+  border: 1px solid var(--redditish-border-color);
+  background: var(--secondary);
+
+  @content;
+
+  .discourse-no-touch & {
+    &:hover {
+      border: 1px solid var(--redditish-border-highlight-color);
+    }
+  }
+}
+
+@mixin custom-topic-width {
+  width: calc(100% - 8em);
+
+  @media screen and (width <= 924px) {
+    // incorrect lint rule, see: https://github.com/stylelint-scss/stylelint-config-recommended-scss/issues/369
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    width: 100%;
+  }
+}
+
+@import "badges";
+@import "categories";
+@import "category-banner";
+@import "category-boxes";
+@import "chat";
+@import "composer";
+@import "groups";
+@import "header";
+@import "right-sidebar";
+@import "search";
+@import "select-kit";
+@import "tag";
+@import "topic";
+@import "topic-list";
+@import "user";
+
+body {
+  background: var(--redditish-bg-color);
+  background-image: none !important; /* overrides category bg because we use it for banners instead */
+
+  &:not(.has-sidebar-page) {
+    .sidebar-wrapper {
+      background: var(--redditish-bg-color);
+    }
+  }
+
+  /* pepesilva.jpg */
+  &.tags-page,
+  &[class*="navigation-"]:not([class*="archetype-"]),
+  &.navigation-category:not([class*="archetype-"]) {
+    #main-outlet-wrapper {
+      grid-template-areas:
+        "category-banner category-banner category-banner category-banner category-banner category-banner"
+        "sidebar lspace content sidebar2 rspace sidebar-spacer";
+      grid-template-columns:
+        var(--d-sidebar-width) 1fr minmax(0, 640px)
+        312px 1fr var(--d-sidebar-width);
+      grid-template-rows: auto 1fr;
+      gap: 0 1.5em;
+
+      @media screen and (width <= 1500px) {
+        grid-template-columns: auto 1fr minmax(0, 640px) 312px 1fr auto;
+      }
+
+      @media screen and (width <= 1160px) {
+        grid-template-areas:
+          "category-banner category-banner category-banner category-banner category-banner"
+          "sidebar lspace content rspace sidebar-spacer";
+        grid-template-columns: auto 1fr minmax(0, 640px) 1fr auto;
+
+        .custom-right-sidebar {
+          display: none;
+        }
+      }
+
+      @media screen and (width <= 768px) {
+        gap: 0.5em;
+      }
+    }
+  }
+
+  &.has-sidebar-page.tags-page,
+  &.has-sidebar-page[class*="navigation-"]:not([class*="archetype-"]),
+  &.has-sidebar-page.navigation-category:not([class*="archetype-"]) {
+    #main-outlet-wrapper {
+      grid-template-areas:
+        "sidebar category-banner category-banner category-banner category-banner category-banner"
+        "sidebar lspace content sidebar2 rspace sidebar-spacer";
+
+      @media screen and (width <= 1160px) {
+        grid-template-areas:
+          "sidebar category-banner category-banner category-banner category-banner"
+          "sidebar lspace content rspace sidebar-spacer";
+        grid-template-columns: auto 1fr minmax(0, 640px) 1fr auto;
+
+        .custom-right-sidebar {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &[class*="user-"],
+  &.archetype-regular {
+    .custom-tag-banner,
+    .custom-category-banner,
+    .custom-right-sidebar {
+      display: none;
+    }
+  }
+}
+
+.btn-default,
+.btn-primary,
+.btn {
+  &:not(
+    .btn-icon,
+    [class*="popup-menu-btn"],
+    [class*="post-action-menu__"],
+    [class*="topic-map__"]
+  ) {
+    padding: 0.5em 1em;
+  }
+}
+
+.btn[class*="popup-menu-btn"] {
+  border: none;
+}
+
+.dropdown-menu {
+  .btn {
+    border-radius: 0;
+  }
+}
+
+#main-outlet {
+  max-width: 640px;
+  margin: 0 auto;
+  grid-area: content;
+  padding-bottom: 2em; // makes some room for "powered by discourse"
+}
+
+#banner {
+  @include custom-card;
+}
+
+.sidebar-wrapper .sidebar-container {
+  border-right: 1px solid var(--redditish-border-color);
+
+  &:hover {
+    border-color: var(--redditish-border-highlight-color);
+  }
+}
+
+.sidebar-section-wrapper
+  .sidebar-section-header.sidebar-section-header-collapsable {
+  padding-left: 0;
+}
+
+.sidebar-section-link-wrapper button {
+  border-radius: 0;
+  padding: 0 var(--d-sidebar-row-horizontal-padding) !important; // overrides button specificity
+}
+
+.add-to-sidebar {
+  .d-icon-star {
+    color: var(--tertiary);
+  }
+}
+
+.admin-content {
+  @include custom-card;
+}
+
+.body-page {
+  @include custom-card;
+}
+
+.powered-by-discourse {
+  border: 1px solid var(--primary-500);
+  grid-area: content;
+  align-self: end;
+}
+
+html.composer-open #main-outlet {
+  padding-bottom: var(--composer-height);
+}
+
+.topic-drafts-menu-trigger {
+  border-radius: var(--d-button-border-radius);
+}
+
+.custom-search-banner-wrap.welcome-banner__wrap {
+  @include custom-card;
+  margin-bottom: 1em;
+}
+
+.welcome-banner__title {
+  font-size: var(--font-up-4);
+}
+
+// ── WBO Typography ────────────────────────────────────────────────────────────
+
+body {
+  font-family: "Rubik", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.welcome-banner__title,
+.custom-topic-layout h2,
+.d-header .title,
+.fancy-title,
+.topic-title a,
+.category-name {
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+// ── WBO Accent Colour (orange) ────────────────────────────────────────────────
+
+.nav-pills > li > a.active,
+.nav-pills > li > button.active {
+  background: var(--wbo-orange-dim);
+  color: var(--wbo-orange);
+}
+
+// ── WBO Primary Button ────────────────────────────────────────────────────────
+
+.btn-primary:not(.btn-icon, [class*="popup-menu-btn"]) {
+  background-color: #2c1400;
+  border-color: var(--wbo-orange);
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
+  .discourse-no-touch &:hover {
+    background-color: #3d1c00;
+    border-color: var(--wbo-orange);
+    color: #fff;
+  }
+}
+
+// ── WBO Focus Ring (blue) ─────────────────────────────────────────────────────
+
+:focus-visible {
+  outline-color: var(--wbo-blue);
+}
+
+// ── WBO Dark Mode Surface Colours ────────────────────────────────────────────
+
+@if not is-light-color-scheme() {
+  .d-header {
+    background: #051129;
+  }
+
+  #topic-title {
+    background: #051129;
+
+    h1 a {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .badge-category__name,
+    .discourse-tag.simple {
+      color: rgba(255, 255, 255, 0.65);
+    }
+  }
+
+  .posts-wrapper {
+    background: #051129;
+  }
+}
