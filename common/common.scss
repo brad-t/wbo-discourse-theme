@@ -250,6 +250,10 @@ h6,
 .nav-pills a,
 .nav-pills button {
   text-decoration: none !important;
+
+  &:not(.active):hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 .nav-pills > li > a::after,
@@ -257,10 +261,6 @@ h6,
 .nav-pills > li > button::after,
 .nav-pills > li > button::before {
   content: none !important;
-}
-
-.nav.nav-pills li.navigation-item a.navigation-link:not(.active):hover {
-  background: rgba(255, 255, 255, 0.08);
 }
 
 // ── WBO Primary Button ────────────────────────────────────────────────────────
