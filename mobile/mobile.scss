@@ -36,25 +36,14 @@ body.category,
 .navigation-topics,
 .categories-list {
   .navigation-controls {
-    right: 1.25em;
-    bottom: 1em;
-    top: unset;
-
-    .bulk-select {
-      display: none;
-    }
-
-    #create-topic {
-      display: flex !important;
-      background: var(--tertiary);
-      color: var(--secondary);
-      box-shadow: var(--shadow-card);
-
-      .d-icon {
-        color: var(--secondary);
-      }
-    }
+    // Discourse's floating create-topic button is replaced by wbo-bottom-bar
+    display: none;
   }
+}
+
+// Discourse's footer nav is replaced by wbo-bottom-bar
+.footer-nav-widget {
+  display: none !important;
 }
 
 #topic-title,
