@@ -244,9 +244,9 @@ h6,
   color: var(--wbo-orange);
 }
 
-// ── Nav pill link styles — tab indicator ─────────────────────────────────────
+// ── Admin nav pill links — tab indicator style ────────────────────────────────
 
-.nav.nav-pills .navigation-link {
+.nav.nav-pills li.navigation-item a.navigation-link {
   text-decoration: none !important;
   border-radius: 0 !important;
   border-bottom: 2px solid transparent;
