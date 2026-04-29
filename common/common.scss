@@ -246,16 +246,16 @@ h6,
 
 // ── Nav pill reset — kill core underlines/borders everywhere ─────────────────
 
-.nav-pills {
-  a,
-  button {
-    text-decoration: none !important;
-    border-bottom: none !important;
-  }
+.nav-pills,
+.nav-pills a,
+.nav-pills button,
+.nav-pills li {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
 
-  li {
-    border-bottom: none !important;
-  }
+.nav-pills * {
+  border-bottom: none !important;
 }
 
 // ── Admin nav pill links ──────────────────────────────────────────────────────
