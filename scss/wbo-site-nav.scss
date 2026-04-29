@@ -55,6 +55,18 @@ $wbo-nav-mobile-breakpoint: 768px;
   z-index: 1100 !important;
 }
 
+// Mobile: push the full-height user menu / hamburger panels below the WBO
+// bar so the avatar stays visible (and tappable to close).
+@media screen and (width <= $wbo-nav-mobile-breakpoint) {
+  .menu-panel.revamped,
+  .user-menu,
+  .hamburger-panel,
+  .sidebar-hamburger-dropdown {
+    top: $wbo-nav-height !important;
+    max-height: calc(100vh - #{$wbo-nav-height}) !important;
+  }
+}
+
 // ── Desktop nav bar ───────────────────────────────────────────────────────────
 
 .wbo-site-nav {
