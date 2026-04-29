@@ -11,17 +11,36 @@ $wbo-nav-bg: #00143c;
 $wbo-nav-height: 56px;
 $wbo-nav-mobile-breakpoint: 768px;
 
-// We deliberately do NOT hide .d-header. The WBO nav is opaque and covers it
-// visually at z-index 1002. Hiding it would also hide the user menu panel
-// (rendered as a descendant), breaking proxy-click interactions.
+// .d-header creates its own stacking context at ~z-index:1000. Anything
+// rendered inside it (user menu, hamburger panel, etc.) cannot paint above
+// the WBO nav (z-index:1002) no matter what z-index it claims, because of
+// the parent stacking context cap. Solution: raise .d-header itself above
+// the WBO nav, then hide its visible row so the bar doesn't show.
 
-// Discourse renders menu panels and the sidebar at z-index ~1000, which is
-// below our nav. Lift them above so they are not clipped by the WBO bar.
-.menu-panel,
-.user-menu,
+.d-header {
+  z-index: 1003 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  // Hide the visible header row but keep menu-panel descendants visible.
+  > .wrap {
+    visibility: hidden;
+  }
+
+  .menu-panel,
+  .user-menu,
+  .hamburger-panel,
+  .sidebar-hamburger-dropdown,
+  .revamped {
+    visibility: visible;
+  }
+}
+
+// Sidebar-wrapper is a sibling of .d-header at body level — bump it too
+// so its top edge isn't clipped by the WBO nav.
 .sidebar-wrapper,
-.sidebar-hamburger-dropdown,
-.hamburger-panel {
+.sidebar-hamburger-dropdown {
   z-index: 1100 !important;
 }
 
