@@ -248,8 +248,15 @@ h6,
 // ── Nav pill links ────────────────────────────────────────────────────────────
 
 .nav-pills a,
-.nav-pills button {
+.nav-pills button,
+.nav-pills li {
   text-decoration: none !important;
+  box-shadow: none !important;
+
+  &::after,
+  &::before {
+    display: none !important;
+  }
 }
 
 .nav.nav-pills li.navigation-item a.navigation-link:not(.active):hover {
