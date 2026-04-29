@@ -75,18 +75,28 @@ export default class WboSiteNav extends Component {
 
   @action
   openUserMenu() {
-    // Proxy click to Discourse's hidden user menu button
-    document
-      .querySelector(".d-header-icons .current-user button")
-      ?.click();
+    // Proxy-click Discourse's user menu button (covered by WBO nav, not hidden).
+    const btn =
+      document.querySelector(
+        ".d-header-icons .header-dropdown-toggle.current-user button"
+      ) ||
+      document.querySelector(".d-header-icons .current-user button") ||
+      document.querySelector(".header-dropdown-toggle.current-user button");
+    btn?.click();
   }
 
   @action
   toggleSidebar() {
-    // Button is *inside* .header-sidebar-toggle, not on it
-    document
-      .querySelector(".header-sidebar-toggle button")
-      ?.click();
+    // Desktop uses .header-sidebar-toggle; mobile uses the hamburger dropdown
+    // in .d-header-icons. Try each in order.
+    const btn =
+      document.querySelector(".header-sidebar-toggle button") ||
+      document.querySelector(
+        ".d-header-icons .header-dropdown-toggle.hamburger-dropdown button"
+      ) ||
+      document.querySelector(".hamburger-dropdown button") ||
+      document.querySelector(".hamburger-dropdown");
+    btn?.click();
   }
 
   @action

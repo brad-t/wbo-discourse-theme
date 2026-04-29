@@ -11,12 +11,9 @@ $wbo-nav-bg: #00143c;
 $wbo-nav-height: 56px;
 $wbo-nav-mobile-breakpoint: 768px;
 
-// ── Hide the real Discourse header on all sizes ───────────────────────────────
-
-.d-header {
-  opacity: 0;
-  pointer-events: none;
-}
+// We deliberately do NOT hide .d-header. The WBO nav is opaque and covers it
+// visually at z-index 1002. Hiding it would also hide the user menu panel
+// (rendered as a descendant), breaking proxy-click interactions.
 
 // ── Desktop nav bar ───────────────────────────────────────────────────────────
 
@@ -148,10 +145,20 @@ $wbo-nav-mobile-breakpoint: 768px;
     }
   }
 
-  // ── Mobile: hide desktop nav bar ──────────────────────────────────────────
+  // ── Mobile: hide just the link row, keep logo + user/login ────────────────
 
   @media screen and (width <= $wbo-nav-mobile-breakpoint) {
-    display: none;
+    padding-left: 0;
+    padding-right: 0.75em;
+
+    &__logo {
+      margin-left: calc(#{$wbo-nav-height} + 0.25em);
+      margin-right: auto;
+    }
+
+    &__links {
+      display: none;
+    }
   }
 }
 
@@ -300,19 +307,9 @@ $wbo-nav-mobile-breakpoint: 768px;
   to   { opacity: 1; }
 }
 
-// ── Mobile: hide Discourse hamburger + hide original Discourse header icons ───
-
-@media screen and (width <= $wbo-nav-mobile-breakpoint) {
-  .header-sidebar-toggle {
-    display: none !important;
-  }
-
-  // Keep Discourse's header bar (handles keyboard nav, etc.) but keep it invisible
-  // The hamburger slot is handled by .wbo-hamburger above
-  .d-header-icons {
-    display: none !important;
-  }
-}
+// We don't display:none the Discourse header icons or sidebar toggle —
+// the WBO nav covers them visually, and proxy-clicks need them to remain
+// in the DOM and live (display:none can drop click handlers / focus).
 
 // ── Mobile: sticky bottom bar ─────────────────────────────────────────────────
 
