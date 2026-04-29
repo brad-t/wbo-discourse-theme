@@ -36,25 +36,20 @@ body.category,
 .navigation-topics,
 .categories-list {
   .navigation-controls {
-    right: 1.25em;
-    bottom: 1em;
-    top: unset;
+    // The WBO bottom bar handles the create-topic button; hide the Discourse FAB
+    #create-topic {
+      display: none !important;
+    }
 
     .bulk-select {
       display: none;
     }
-
-    #create-topic {
-      display: flex !important;
-      background: var(--tertiary);
-      color: var(--secondary);
-      box-shadow: var(--shadow-card);
-
-      .d-icon {
-        color: var(--secondary);
-      }
-    }
   }
+}
+
+// Hide Discourse's native mobile footer nav — the WBO bottom bar replaces it
+.footer-nav {
+  display: none !important;
 }
 
 #topic-title,

@@ -1,0 +1,405 @@
+// ── WBO Site Navigation ───────────────────────────────────────────────────────
+//
+// Overlay approach: the nav sits at position:fixed top:0 z-index:1002,
+// covering the Discourse .d-header at the same position. We never push
+// .d-header down, so Discourse's --header-offset calculation stays correct
+// and body padding is untouched.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+$wbo-nav-bg: #00143c;
+$wbo-nav-height: 56px;
+$wbo-nav-mobile-breakpoint: 768px;
+
+// ── Hide the real Discourse header on all sizes ───────────────────────────────
+
+.d-header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+// ── Desktop nav bar ───────────────────────────────────────────────────────────
+
+.wbo-site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $wbo-nav-height;
+  z-index: 1002;
+  background: $wbo-nav-bg;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  display: flex;
+  align-items: center;
+  padding: 0 1.25em;
+  gap: 0;
+
+  // ── Logo ──────────────────────────────────────────────────────────────────
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 1.5em;
+
+    img {
+      display: block;
+      height: 36px;
+      width: auto;
+    }
+  }
+
+  &__logo-text {
+    font-family: "Oswald", sans-serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+
+  // ── Nav links ─────────────────────────────────────────────────────────────
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    height: $wbo-nav-height;
+    padding: 0 0.9em;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-family: "Oswald", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    &.is-active {
+      color: #fff;
+      border-bottom-color: var(--wbo-orange);
+    }
+  }
+
+  // ── Right side (user / login) ─────────────────────────────────────────────
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-left: auto;
+  }
+
+  &__user-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: border-color 0.15s;
+
+    &:hover {
+      border-color: var(--wbo-orange);
+    }
+
+    img.avatar {
+      border-radius: 50%;
+      display: block;
+    }
+  }
+
+  &__login {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 1em;
+    background: var(--wbo-orange);
+    color: #fff;
+    font-family: "Oswald", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: background 0.15s;
+
+    &:hover {
+      background: darken(#ff7900, 8%);
+      color: #fff;
+    }
+  }
+
+  // ── Mobile: hide desktop nav bar ──────────────────────────────────────────
+
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    display: none;
+  }
+}
+
+// ── Mobile: hamburger button ──────────────────────────────────────────────────
+
+.wbo-hamburger {
+  display: none;
+
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $wbo-nav-height;
+    height: $wbo-nav-height;
+    z-index: 1010;
+    background: $wbo-nav-bg;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 2px;
+      transition: transform 0.25s, opacity 0.25s;
+      transform-origin: center;
+    }
+
+    &.is-open {
+      span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+  }
+}
+
+// ── Mobile: slide-in drawer ───────────────────────────────────────────────────
+
+.wbo-nav-drawer {
+  display: none;
+
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    z-index: 1009;
+    background: $wbo-nav-bg;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: $wbo-nav-height;
+    overflow-y: auto;
+
+    &.is-open {
+      transform: translateX(0);
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5em 0;
+    }
+
+    &__link {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 1.5em;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-family: "Oswald", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-left: 3px solid transparent;
+      transition: color 0.15s, background 0.15s;
+
+      &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      &.is-active {
+        color: #fff;
+        border-left-color: var(--wbo-orange);
+        background: rgba(255, 121, 0, 0.08);
+      }
+    }
+
+    &__logout {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 1.5em;
+      margin-top: auto;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-family: "Oswald", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      transition: color 0.15s;
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.85);
+      }
+    }
+  }
+}
+
+// ── Mobile: backdrop ──────────────────────────────────────────────────────────
+
+.wbo-nav-backdrop {
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    position: fixed;
+    inset: 0;
+    z-index: 1008;
+    background: rgba(0, 0, 0, 0.55);
+    animation: wboFadeIn 0.2s ease;
+  }
+}
+
+@keyframes wboFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Mobile: hide Discourse hamburger + hide original Discourse header icons ───
+
+@media screen and (width <= $wbo-nav-mobile-breakpoint) {
+  .header-sidebar-toggle {
+    display: none !important;
+  }
+
+  // Keep Discourse's header bar (handles keyboard nav, etc.) but keep it invisible
+  // The hamburger slot is handled by .wbo-hamburger above
+  .d-header-icons {
+    display: none !important;
+  }
+}
+
+// ── Mobile: sticky bottom bar ─────────────────────────────────────────────────
+
+.wbo-bottom-bar {
+  display: none;
+
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    z-index: 1001;
+    background: $wbo-nav-bg;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    &__nav {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0 1em;
+      height: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: "Oswald", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: left;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .d-icon {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
+      }
+    }
+
+    &__label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__create {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      margin-right: 0.75em;
+      background: var(--wbo-orange);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(255, 121, 0, 0.5);
+      transition: background 0.15s, box-shadow 0.15s;
+
+      &:hover {
+        background: darken(#ff7900, 8%);
+        box-shadow: 0 3px 12px rgba(255, 121, 0, 0.65);
+      }
+
+      .d-icon {
+        color: #fff;
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+// ── Mobile: add bottom padding so content isn't obscured by the bar ───────────
+
+@media screen and (width <= $wbo-nav-mobile-breakpoint) {
+  #main-outlet-wrapper,
+  #main-outlet {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0)) !important;
+  }
+}
