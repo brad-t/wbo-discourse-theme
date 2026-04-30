@@ -25,6 +25,29 @@ export default class WboSiteNav extends Component {
   @service composer;
 
   @tracked isDrawerOpen = false;
+  @tracked isDiscourseSidebarOpen = false;
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
+  constructor() {
+    super(...arguments);
+    // Watch for Discourse's mobile sidebar dropdown mounting/unmounting so
+    // we can render a click-blocking backdrop while it's open.
+    this._sidebarObserver = new MutationObserver(() => {
+      this.isDiscourseSidebarOpen = !!document.querySelector(
+        ".sidebar-hamburger-dropdown"
+      );
+    });
+    this._sidebarObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  willDestroy() {
+    super.willDestroy?.(...arguments);
+    this._sidebarObserver?.disconnect();
+  }
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
@@ -310,6 +333,16 @@ export default class WboSiteNav extends Component {
       ></div>
     {{/if}}
 
+    {{! ── Mobile: backdrop for Discourse's sidebar dropdown ────────────── }}
+    {{#if this.isDiscourseSidebarOpen}}
+      {{! template-lint-disable no-invalid-interactive }}
+      <div
+        {{on "click" this.toggleSidebar}}
+        class="wbo-discourse-sidebar-backdrop"
+        role="presentation"
+      ></div>
+    {{/if}}
+
     {{! ── Mobile: sticky bottom bar ────────────────────────────────────── }}
     <div class="wbo-bottom-bar">
       <button
@@ -318,9 +351,8 @@ export default class WboSiteNav extends Component {
         class="wbo-bottom-bar__nav"
         aria-label="Open sidebar"
       >
-        {{icon "bars"}}
+        {{icon "angles-right"}}
         <span class="wbo-bottom-bar__label">{{this.activeNavLabel}}</span>
-        {{icon "chevron-up"}}
       </button>
 
       {{#if this.showCreateButton}}

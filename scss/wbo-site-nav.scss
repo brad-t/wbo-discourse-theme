@@ -354,6 +354,20 @@ $wbo-nav-mobile-breakpoint: 768px;
   }
 }
 
+// Backdrop while the Discourse mobile sidebar dropdown is open.
+// Sits below the dropdown (1100) but above everything else; blocks taps
+// on the page underneath, and tapping the backdrop itself closes the
+// sidebar (proxy-clicks the same trigger).
+.wbo-discourse-sidebar-backdrop {
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    position: fixed;
+    inset: 0;
+    z-index: 1099;
+    background: rgba(0, 0, 0, 0.55);
+    animation: wboFadeIn 0.2s ease;
+  }
+}
+
 @keyframes wboFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
