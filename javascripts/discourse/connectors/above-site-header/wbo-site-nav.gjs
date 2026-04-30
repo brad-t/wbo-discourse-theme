@@ -45,22 +45,55 @@ export default class WboSiteNav extends Component {
   get activeNavLabel() {
     const route = this.router.currentRouteName || "";
 
+    // Topic page — show the topic's category as context
     if (route.startsWith("topic.")) {
       const attrs = this.router.currentRoute?.attributes;
       return attrs?.topic?.category?.name ?? attrs?.category?.name ?? "Topic";
     }
-    if (route.includes("category")) {
+
+    // User-area top-level sidebar sections (collapse all sub-routes)
+    if (route.startsWith("userPrivateMessages")) return "My messages";
+    if (route.startsWith("userActivity")) return "Activity";
+    if (route.startsWith("userNotifications")) return "Notifications";
+    if (route.startsWith("userInvited")) return "Invites";
+    if (route.startsWith("preferences")) return "Preferences";
+    if (route.startsWith("user.summary")) return "Summary";
+    if (route.startsWith("user.")) return "Profile";
+
+    // Other top-level sidebar destinations
+    if (route.startsWith("review")) return "Review";
+    if (route.startsWith("badges")) return "Badges";
+    if (route.startsWith("groups")) return "Groups";
+    if (route.startsWith("admin")) return "Admin";
+    if (route.startsWith("full-page-search") || route === "search") {
+      return "Search";
+    }
+
+    // Tag pages
+    if (route.startsWith("tag.") || route.startsWith("tags.")) {
+      const tag = this.router.currentRoute?.params?.tag_id;
+      return tag ? `#${tag}` : "Tags";
+    }
+
+    // Category-scoped discovery
+    if (route.startsWith("discovery.category")) {
       return this.router.currentRoute?.attributes?.category?.name ?? "Category";
     }
-    if (route.includes("tag")) {
-      const tag = this.router.currentRoute?.params?.tag_id;
-      return tag ? `#${tag}` : "Tag";
+
+    // Discovery filters (latest/hot/top/new/unread/read/posted/bookmarks)
+    if (route.startsWith("discovery.")) {
+      const tail = route.slice("discovery.".length).toLowerCase();
+      if (tail.startsWith("latest")) return "Latest";
+      if (tail.startsWith("hot")) return "Hot";
+      if (tail.startsWith("top")) return "Top";
+      if (tail.startsWith("unread")) return "Unread";
+      if (tail.startsWith("new")) return "New";
+      if (tail.startsWith("read")) return "Read";
+      if (tail.startsWith("posted")) return "My posts";
+      if (tail.startsWith("bookmarks")) return "Bookmarks";
+      if (tail.startsWith("categories")) return "Categories";
     }
-    if (route.includes("latest")) return "Latest";
-    if (route.includes("hot")) return "Hot";
-    if (route.includes("top")) return "Top";
-    if (route.includes("unread")) return "Unread";
-    if (route.includes("new")) return "New";
+
     return "Topics";
   }
 
