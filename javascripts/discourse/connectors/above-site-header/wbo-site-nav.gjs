@@ -29,63 +29,67 @@ export default class WboSiteNav extends Component {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
+  // Events to swallow on outside taps. pointerdown/mousedown cover modern
+  // Discourse / Float-Kit outside-tap handlers; touchstart covers iOS;
+  // click is needed to actually close the sidebar.
+  static OUTSIDE_TAP_EVENTS = [
+    "touchstart",
+    "pointerdown",
+    "mousedown",
+    "click",
+  ];
+
   constructor() {
     super(...arguments);
+
     // Watch for Discourse's mobile sidebar dropdown mounting/unmounting so
-    // we can render a backdrop and intercept outside taps.
+    // we can render a visual backdrop while it's open.
     this._sidebarObserver = new MutationObserver(() => {
-      const open = !!document.querySelector(".sidebar-hamburger-dropdown");
-      if (open === this.isDiscourseSidebarOpen) return;
-      this.isDiscourseSidebarOpen = open;
-      if (open) {
-        this._attachOutsideTapBlocker();
-      } else {
-        this._detachOutsideTapBlocker();
-      }
+      this.isDiscourseSidebarOpen = !!document.querySelector(
+        ".sidebar-hamburger-dropdown"
+      );
     });
     this._sidebarObserver.observe(document.body, {
       childList: true,
       subtree: true,
     });
+
+    // Capture-phase blocker on `window` so we run BEFORE any document-level
+    // listener regardless of registration order. While the sidebar is open,
+    // every tap landing outside it (and outside our own toggle) is
+    // swallowed before reaching Discourse's outside-tap handler — that
+    // prevents the sidebar from closing mid-touch and the synthesized
+    // click from landing on a link beneath.
+    WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
+      window.addEventListener(e, this._outsideTapBlocker, true)
+    );
   }
 
   willDestroy() {
     super.willDestroy?.(...arguments);
     this._sidebarObserver?.disconnect();
-    this._detachOutsideTapBlocker();
+    WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
+      window.removeEventListener(e, this._outsideTapBlocker, true)
+    );
   }
 
-  // Capture-phase blocker: while the mobile sidebar is open, every touch /
-  // click that lands outside it (and outside our own toggle button) is
-  // swallowed before reaching links. The click handler then closes the
-  // sidebar. This avoids relying on the visual backdrop element to be a
-  // hit-target — fixes ghost clicks even if the backdrop gets stacking-
-  // context-trapped by a CSS transform somewhere up the tree.
   _outsideTapBlocker = (event) => {
     const sidebar = document.querySelector(".sidebar-hamburger-dropdown");
-    if (!sidebar) return;
+    if (!sidebar) return; // no-op when sidebar isn't open
     const t = event.target;
-    if (sidebar.contains(t)) return;
-    // Allow our own toggle button to work normally (it will close the sidebar)
+    if (!t || sidebar.contains(t)) return;
+    // Allow our own toggle button (and the backdrop itself) to work
     if (t.closest?.(".wbo-bottom-bar__nav")) return;
 
     event.preventDefault();
-    event.stopPropagation();
-    // Only act on click to avoid double-firing from touchstart→click
+    event.stopImmediatePropagation();
+    // Only close on click — touch-/pointer-/mousedown all fire ahead of
+    // the click in a single tap; closing on the down-event would unmount
+    // the backdrop and let the click leak through to the link below.
     if (event.type === "click") {
       this.toggleSidebar();
     }
   };
-
-  _attachOutsideTapBlocker() {
-    document.addEventListener("touchstart", this._outsideTapBlocker, true);
-    document.addEventListener("click", this._outsideTapBlocker, true);
-  }
-
-  _detachOutsideTapBlocker() {
-    document.removeEventListener("touchstart", this._outsideTapBlocker, true);
-    document.removeEventListener("click", this._outsideTapBlocker, true);
-  }
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
