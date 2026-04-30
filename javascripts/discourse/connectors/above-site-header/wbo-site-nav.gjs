@@ -4,6 +4,7 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
+import Composer from "discourse/models/composer";
 
 const NAV_ITEMS = [
   { label: "Tournaments", url: "https://worldbeyblade.org/tournaments/" },
@@ -20,6 +21,7 @@ export default class WboSiteNav extends Component {
   @service router;
   @service currentUser;
   @service siteSettings;
+  @service composer;
 
   @tracked isDrawerOpen = false;
 
@@ -61,6 +63,53 @@ export default class WboSiteNav extends Component {
     return "Topics";
   }
 
+  // ── Create / reply context ────────────────────────────────────────────────
+
+  get currentTopic() {
+    const route = this.router.currentRouteName || "";
+    if (!route.startsWith("topic.")) {
+      return null;
+    }
+    const attrs = this.router.currentRoute?.attributes;
+    return attrs?.topic ?? attrs ?? null;
+  }
+
+  get currentCategory() {
+    return this.router.currentRoute?.attributes?.category ?? null;
+  }
+
+  get isOnTopic() {
+    return !!this.currentTopic;
+  }
+
+  get canReplyToTopic() {
+    const t = this.currentTopic;
+    return t && !t.archived && !t.closed && this.currentUser;
+  }
+
+  get canCreateTopic() {
+    if (!this.currentUser) return false;
+    const route = this.router.currentRouteName || "";
+    return [
+      "discovery.",
+      "tag.",
+      "tags.",
+      "categories",
+    ].some((prefix) => route.startsWith(prefix));
+  }
+
+  get showCreateButton() {
+    return this.isOnTopic ? this.canReplyToTopic : this.canCreateTopic;
+  }
+
+  get createButtonIcon() {
+    return this.isOnTopic ? "reply" : "plus";
+  }
+
+  get createButtonLabel() {
+    return this.isOnTopic ? "Reply" : "New topic";
+  }
+
   // ── Actions ───────────────────────────────────────────────────────────────
 
   @action
@@ -100,8 +149,21 @@ export default class WboSiteNav extends Component {
   }
 
   @action
-  createTopic() {
-    document.querySelector("#create-topic")?.click();
+  createOrReply() {
+    if (this.isOnTopic) {
+      const topic = this.currentTopic;
+      if (!topic) return;
+      this.composer.open({
+        action: Composer.REPLY,
+        topic,
+        draftKey: topic.draft_key,
+        draftSequence: topic.draft_sequence,
+      });
+    } else {
+      this.composer.openNewTopic({
+        category: this.currentCategory,
+      });
+    }
   }
 
   <template>
@@ -205,14 +267,14 @@ export default class WboSiteNav extends Component {
         {{icon "chevron-up"}}
       </button>
 
-      {{#if this.currentUser}}
+      {{#if this.showCreateButton}}
         <button
-          {{on "click" this.createTopic}}
+          {{on "click" this.createOrReply}}
           type="button"
           class="wbo-bottom-bar__create"
-          aria-label="New topic"
+          aria-label={{this.createButtonLabel}}
         >
-          {{icon "pencil-alt"}}
+          {{icon this.createButtonIcon}}
         </button>
       {{/if}}
     </div>
