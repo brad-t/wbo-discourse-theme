@@ -10,11 +10,11 @@ import Composer from "discourse/models/composer";
 const NAV_ITEMS = [
   { label: "Tournaments", url: "https://worldbeyblade.org/tournaments/" },
   { label: "Leagues", url: "https://leaderboard.fighting-spirits.org/" },
+  { label: "Community", url: "/", active: true },
   {
     label: "Rules & Resources",
     url: "https://worldbeyblade.org/rules/beyblade-x-rules/",
   },
-  { label: "Forums", url: "/", active: true },
   { label: "About WBO", url: "#" },
 ];
 
