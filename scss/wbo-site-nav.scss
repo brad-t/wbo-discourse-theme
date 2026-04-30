@@ -391,74 +391,72 @@ $wbo-nav-mobile-breakpoint: 768px;
   @media screen and (width <= $wbo-nav-mobile-breakpoint) {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom, 0);
     left: 0;
     right: 0;
-    height: 56px;
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding: 0.75em 1em;
     z-index: 1001;
-    background: $wbo-nav-bg;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    border: none;
+    pointer-events: none; // let taps fall through except on the buttons
 
+    // Floating pill-shaped sidebar button
     &__nav {
-      flex: 1;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5em;
-      padding: 0 1em;
-      height: 100%;
-      background: none;
-      border: none;
+      gap: 0.6em;
+      padding: 0.65em 1.25em;
+      background: $wbo-nav-bg;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 100px;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.8);
+      color: #fff;
       font-family: "Oswald", sans-serif;
       font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      text-align: left;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      pointer-events: auto;
+      transition: background 0.15s, border-color 0.15s;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.05);
+        background: lighten(#00143c, 4%);
+        border-color: rgba(255, 255, 255, 0.2);
       }
 
       .d-icon {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
       }
     }
 
-    &__label {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
+    // Floating circular create / reply button
     &__create {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 44px;
-      height: 44px;
-      margin-right: 0.75em;
+      width: 52px;
+      height: 52px;
       background: var(--wbo-orange);
       border: none;
       border-radius: 50%;
       cursor: pointer;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(255, 121, 0, 0.5);
+      pointer-events: auto;
+      box-shadow: 0 4px 14px rgba(255, 121, 0, 0.5);
       transition: background 0.15s, box-shadow 0.15s;
 
       &:hover {
         background: darken(#ff7900, 8%);
-        box-shadow: 0 3px 12px rgba(255, 121, 0, 0.65);
+        box-shadow: 0 5px 18px rgba(255, 121, 0, 0.65);
       }
 
       .d-icon {
         color: #fff;
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
     }
   }
@@ -469,6 +467,6 @@ $wbo-nav-mobile-breakpoint: 768px;
 @media screen and (width <= $wbo-nav-mobile-breakpoint) {
   #main-outlet-wrapper,
   #main-outlet {
-    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0)) !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0)) !important;
   }
 }
