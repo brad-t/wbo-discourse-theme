@@ -32,11 +32,16 @@ export default class WboSiteNav extends Component {
   constructor() {
     super(...arguments);
     // Watch for Discourse's mobile sidebar dropdown mounting/unmounting so
-    // we can render a click-blocking backdrop while it's open.
+    // we can render a backdrop and intercept outside taps.
     this._sidebarObserver = new MutationObserver(() => {
-      this.isDiscourseSidebarOpen = !!document.querySelector(
-        ".sidebar-hamburger-dropdown"
-      );
+      const open = !!document.querySelector(".sidebar-hamburger-dropdown");
+      if (open === this.isDiscourseSidebarOpen) return;
+      this.isDiscourseSidebarOpen = open;
+      if (open) {
+        this._attachOutsideTapBlocker();
+      } else {
+        this._detachOutsideTapBlocker();
+      }
     });
     this._sidebarObserver.observe(document.body, {
       childList: true,
@@ -47,6 +52,39 @@ export default class WboSiteNav extends Component {
   willDestroy() {
     super.willDestroy?.(...arguments);
     this._sidebarObserver?.disconnect();
+    this._detachOutsideTapBlocker();
+  }
+
+  // Capture-phase blocker: while the mobile sidebar is open, every touch /
+  // click that lands outside it (and outside our own toggle button) is
+  // swallowed before reaching links. The click handler then closes the
+  // sidebar. This avoids relying on the visual backdrop element to be a
+  // hit-target — fixes ghost clicks even if the backdrop gets stacking-
+  // context-trapped by a CSS transform somewhere up the tree.
+  _outsideTapBlocker = (event) => {
+    const sidebar = document.querySelector(".sidebar-hamburger-dropdown");
+    if (!sidebar) return;
+    const t = event.target;
+    if (sidebar.contains(t)) return;
+    // Allow our own toggle button to work normally (it will close the sidebar)
+    if (t.closest?.(".wbo-bottom-bar__nav")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    // Only act on click to avoid double-firing from touchstart→click
+    if (event.type === "click") {
+      this.toggleSidebar();
+    }
+  };
+
+  _attachOutsideTapBlocker() {
+    document.addEventListener("touchstart", this._outsideTapBlocker, true);
+    document.addEventListener("click", this._outsideTapBlocker, true);
+  }
+
+  _detachOutsideTapBlocker() {
+    document.removeEventListener("touchstart", this._outsideTapBlocker, true);
+    document.removeEventListener("click", this._outsideTapBlocker, true);
   }
 
   // ── Getters ───────────────────────────────────────────────────────────────
