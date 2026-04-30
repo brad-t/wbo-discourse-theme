@@ -172,6 +172,7 @@ div.education {
 .custom-topic-layout {
   cursor: pointer;
   width: 100%;
+  overflow: hidden;
 
   @include custom-card;
 
