@@ -6,12 +6,13 @@
   --d-input-border-radius: 4px;
   --topic-body-width: 900px;
   --d-nav-underline-height: 0;
+  --wbo-card-radius: 10px;
 }
 
 @mixin custom-card {
   box-sizing: border-box;
   padding: 0.75em;
-  border-radius: 0.25em;
+  border-radius: var(--wbo-card-radius);
   border: 1px solid var(--redditish-border-color);
   background: var(--secondary);
 

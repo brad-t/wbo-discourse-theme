@@ -1,7 +1,7 @@
 #topic-title {
   background: var(--primary);
   margin: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: var(--wbo-card-radius) var(--wbo-card-radius) 0 0;
   box-sizing: border-box;
   padding: 1.25em 2em;
 
@@ -214,7 +214,7 @@
 
 .posts-wrapper {
   @include custom-card {
-    border-radius: 0 0 4px 4px;
+    border-radius: 0 0 var(--wbo-card-radius) var(--wbo-card-radius);
     border-top: none !important;
     padding: 1em 2em 2em;
   }
