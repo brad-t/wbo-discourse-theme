@@ -84,7 +84,20 @@ export default class WboSiteNav extends Component {
 
   get canReplyToTopic() {
     const t = this.currentTopic;
-    return t && !t.archived && !t.closed && this.currentUser;
+    if (!t || !this.currentUser) return false;
+    if (t.archived || t.closed) return false;
+
+    // Discourse's canonical check — covers permissions, consecutive-reply
+    // throttling, post limits, group restrictions, etc.
+    const details = t.details ?? t.get?.("details");
+    if (details && "can_create_post" in details) {
+      return !!details.can_create_post;
+    }
+    // Fallback: top-level flag some Discourse versions expose
+    if ("can_create_post" in t) {
+      return !!t.can_create_post;
+    }
+    return true;
   }
 
   get canCreateTopic() {
