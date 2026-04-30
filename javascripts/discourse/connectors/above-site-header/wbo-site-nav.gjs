@@ -4,6 +4,7 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
+import { getOwner } from "@ember/application";
 import Composer from "discourse/models/composer";
 
 const NAV_ITEMS = [
@@ -70,8 +71,16 @@ export default class WboSiteNav extends Component {
     if (!route.startsWith("topic.")) {
       return null;
     }
-    const attrs = this.router.currentRoute?.attributes;
-    return attrs?.topic ?? attrs ?? null;
+    // The topic controller's model is the live topic with `details` populated.
+    // Falls back to router attributes for early renders.
+    const owner = getOwner(this);
+    const topicController = owner?.lookup?.("controller:topic");
+    return (
+      topicController?.model ??
+      this.router.currentRoute?.attributes?.topic ??
+      this.router.currentRoute?.attributes ??
+      null
+    );
   }
 
   get currentCategory() {
@@ -88,16 +97,17 @@ export default class WboSiteNav extends Component {
     if (t.archived || t.closed) return false;
 
     // Discourse's canonical check — covers permissions, consecutive-reply
-    // throttling, post limits, group restrictions, etc.
+    // throttling, post limits, group restrictions, etc. Be conservative:
+    // if we can't determine the flag, hide the button rather than show a
+    // broken one.
     const details = t.details ?? t.get?.("details");
-    if (details && "can_create_post" in details) {
-      return !!details.can_create_post;
-    }
-    // Fallback: top-level flag some Discourse versions expose
-    if ("can_create_post" in t) {
-      return !!t.can_create_post;
-    }
-    return true;
+    const flag =
+      details?.can_create_post ??
+      details?.get?.("can_create_post") ??
+      t.can_create_post ??
+      t.get?.("can_create_post");
+
+    return flag === true;
   }
 
   get canCreateTopic() {
