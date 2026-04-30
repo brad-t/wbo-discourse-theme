@@ -449,7 +449,6 @@ $wbo-nav-mobile-breakpoint: 768px;
       cursor: pointer;
       flex-shrink: 0;
       pointer-events: auto;
-      box-shadow: 0 4px 14px rgba(255, 121, 0, 0.5);
       transition: background 0.15s, box-shadow 0.15s;
 
       &:hover {
