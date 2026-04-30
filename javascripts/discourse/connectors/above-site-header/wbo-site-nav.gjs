@@ -73,7 +73,10 @@ export default class WboSiteNav extends Component {
     );
   }
 
+  _suppressBlocker = false;
+
   _outsideTapBlocker = (event) => {
+    if (this._suppressBlocker) return;
     const sidebar = document.querySelector(".sidebar-hamburger-dropdown");
     if (!sidebar) return; // no-op when sidebar isn't open
     const t = event.target;
@@ -87,7 +90,16 @@ export default class WboSiteNav extends Component {
     // the click in a single tap; closing on the down-event would unmount
     // the backdrop and let the click leak through to the link below.
     if (event.type === "click") {
-      this.toggleSidebar();
+      // Suppress ourselves while proxy-clicking Discourse's hamburger;
+      // otherwise the synthesized click re-enters this handler (target
+      // is inside .d-header-icons, not the sidebar) and gets swallowed
+      // before Discourse's listener sees it.
+      this._suppressBlocker = true;
+      try {
+        this.toggleSidebar();
+      } finally {
+        this._suppressBlocker = false;
+      }
     }
   };
 
