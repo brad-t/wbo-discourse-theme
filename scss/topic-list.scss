@@ -164,8 +164,10 @@ div.education {
     min-width: 0;
   }
 
-  tr {
+  tr,
+  td {
     border: none;
+    background: transparent;
   }
 }
 
