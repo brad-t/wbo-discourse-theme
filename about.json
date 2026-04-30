@@ -2,7 +2,7 @@
   "about_url": null,
   "license_url": null,
   "assets": {},
-  "name": "redditish",
+  "name": "WBO Discourse",
   "modifiers": {
     "serialize_topic_excerpts": true,
     "topic_thumbnail_sizes": [
