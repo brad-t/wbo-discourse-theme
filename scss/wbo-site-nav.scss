@@ -78,6 +78,8 @@ $wbo-nav-mobile-breakpoint: 768px;
   z-index: 1002;
   background: $wbo-nav-bg;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  // Re-enable interactivity (parent .d-header-wrap is pointer-events:none)
+  pointer-events: auto;
 
   display: flex;
   align-items: center;
@@ -365,6 +367,10 @@ $wbo-nav-mobile-breakpoint: 768px;
     z-index: 1099;
     background: rgba(0, 0, 0, 0.55);
     animation: wboFadeIn 0.2s ease;
+    // The above-site-header outlet renders inside .d-header-wrap, which
+    // has pointer-events:none — that inherits, so we must re-enable it
+    // here or the backdrop won't actually intercept taps.
+    pointer-events: auto;
   }
 }
 

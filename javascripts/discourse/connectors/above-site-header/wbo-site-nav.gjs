@@ -51,6 +51,10 @@ export default class WboSiteNav extends Component {
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
+  get bodyElement() {
+    return document.body;
+  }
+
   get logoUrl() {
     // Discourse stores the logo as a site setting; fall back to DOM if needed
     return (
@@ -334,13 +338,17 @@ export default class WboSiteNav extends Component {
     {{/if}}
 
     {{! ── Mobile: backdrop for Discourse's sidebar dropdown ────────────── }}
+    {{! Portalled to <body> so it isn't trapped in any wrapper's stacking
+        context and reliably sits at the global z-index we want. }}
     {{#if this.isDiscourseSidebarOpen}}
-      {{! template-lint-disable no-invalid-interactive }}
-      <div
-        {{on "click" this.toggleSidebar}}
-        class="wbo-discourse-sidebar-backdrop"
-        role="presentation"
-      ></div>
+      {{#in-element this.bodyElement}}
+        {{! template-lint-disable no-invalid-interactive }}
+        <div
+          {{on "click" this.toggleSidebar}}
+          class="wbo-discourse-sidebar-backdrop"
+          role="presentation"
+        ></div>
+      {{/in-element}}
     {{/if}}
 
     {{! ── Mobile: sticky bottom bar ────────────────────────────────────── }}
