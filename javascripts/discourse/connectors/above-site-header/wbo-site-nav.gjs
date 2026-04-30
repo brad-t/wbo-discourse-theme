@@ -159,6 +159,16 @@ export default class WboSiteNav extends Component {
   }
 
   @action
+  absorbBackdropTouch(event) {
+    // Stop touchstart from bubbling to the document. Discourse's outside-tap
+    // handler runs on touch, not click — if we don't block it, it closes the
+    // sidebar before the synthesized click is dispatched, the backdrop
+    // unmounts, and the click lands on whatever element is now under the
+    // finger (the dreaded ghost click).
+    event.stopPropagation();
+  }
+
+  @action
   toggleSidebar() {
     // Desktop uses .header-sidebar-toggle; mobile uses the hamburger dropdown
     // in .d-header-icons. Try each in order.
@@ -282,6 +292,7 @@ export default class WboSiteNav extends Component {
     {{#if this.isDiscourseSidebarOpen}}
       {{! template-lint-disable no-invalid-interactive }}
       <div
+        {{on "touchstart" this.absorbBackdropTouch}}
         {{on "click" this.toggleSidebar}}
         class="wbo-discourse-sidebar-backdrop"
         role="presentation"

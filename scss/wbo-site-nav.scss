@@ -370,7 +370,10 @@ $wbo-nav-mobile-breakpoint: 768px;
     // The above-site-header outlet renders inside .d-header-wrap, which
     // has pointer-events:none — that inherits, so we must re-enable it
     // here or the backdrop won't actually intercept taps.
-    pointer-events: auto;
+    pointer-events: auto !important;
+    // Suppress browser-synthesized scroll/pinch/click on touch so the
+    // backdrop's own click handler is the only thing that fires.
+    touch-action: none;
   }
 }
 
