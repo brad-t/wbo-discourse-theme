@@ -206,8 +206,10 @@ $wbo-nav-mobile-breakpoint: 768px;
     padding-right: 0.75em;
 
     &__logo {
-      margin-left: calc(#{$wbo-nav-height} + 0.25em);
-      margin-right: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
     }
 
     &__links {
