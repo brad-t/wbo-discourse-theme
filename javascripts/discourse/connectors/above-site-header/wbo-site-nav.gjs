@@ -5,6 +5,7 @@ import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
 import { getOwner } from "@ember/application";
+import { ajax } from "discourse/lib/ajax";
 import Composer from "discourse/models/composer";
 
 const NAV_ITEMS = [
@@ -18,6 +19,10 @@ const NAV_ITEMS = [
   { label: "About WBO", url: "#" },
 ];
 
+// Refresh cached counts if the menu is reopened within this many ms; older
+// than that, refetch. Keeps the dropdown snappy for rapid open/close cycles.
+const COUNTS_CACHE_MS = 30 * 1000;
+
 export default class WboSiteNav extends Component {
   @service router;
   @service currentUser;
@@ -26,6 +31,11 @@ export default class WboSiteNav extends Component {
 
   @tracked isDrawerOpen = false;
   @tracked isDiscourseSidebarOpen = false;
+  @tracked isUserMenuOpen = false;
+  @tracked attendingCount = 0;
+  @tracked unreadDmCount = 0;
+
+  _countsFetchedAt = 0;
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -63,6 +73,17 @@ export default class WboSiteNav extends Component {
     WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
       window.addEventListener(e, this._outsideTapBlocker, true)
     );
+
+    // Close the user menu on any click that lands outside it. Bubble phase
+    // is fine here — the trigger button toggles synchronously in the same
+    // tick, and inside-panel clicks stopPropagation on the panel itself
+    // isn't needed since we check containment.
+    document.addEventListener("click", this._userMenuOutsideClick, true);
+    document.addEventListener("keydown", this._userMenuEscape);
+
+    // Close the user menu on route changes; the panel is fixed-position
+    // and wouldn't naturally unmount on a soft nav.
+    this.router.on("routeDidChange", this._closeUserMenuOnRoute);
   }
 
   willDestroy() {
@@ -71,6 +92,9 @@ export default class WboSiteNav extends Component {
     WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
       window.removeEventListener(e, this._outsideTapBlocker, true)
     );
+    document.removeEventListener("click", this._userMenuOutsideClick, true);
+    document.removeEventListener("keydown", this._userMenuEscape);
+    this.router.off("routeDidChange", this._closeUserMenuOnRoute);
   }
 
   _suppressBlocker = false;
@@ -103,6 +127,24 @@ export default class WboSiteNav extends Component {
     }
   };
 
+  _userMenuOutsideClick = (event) => {
+    if (!this.isUserMenuOpen) return;
+    const t = event.target;
+    if (!t) return;
+    if (t.closest?.(".wbo-user-menu, .wbo-site-nav__user-btn")) return;
+    this.closeUserMenu();
+  };
+
+  _userMenuEscape = (event) => {
+    if (event.key === "Escape" && this.isUserMenuOpen) {
+      this.closeUserMenu();
+    }
+  };
+
+  _closeUserMenuOnRoute = () => {
+    if (this.isUserMenuOpen) this.closeUserMenu();
+  };
+
   // ── Getters ───────────────────────────────────────────────────────────────
 
   get logoUrl() {
@@ -117,6 +159,39 @@ export default class WboSiteNav extends Component {
 
   get userAvatarUrl() {
     return this.currentUser?.avatar_template?.replace("{size}", "45") ?? null;
+  }
+
+  get wboSiteBaseUrl() {
+    // Theme setting; strip a trailing slash so we can concatenate paths cleanly.
+    const raw = settings.wbo_site_base_url || "https://worldbeyblade.org";
+    return raw.replace(/\/$/, "");
+  }
+
+  get userMenuItems() {
+    const username = this.currentUser?.username;
+    return [
+      {
+        key: "tournaments",
+        label: "My Tournaments",
+        icon: "trophy",
+        href: `${this.wboSiteBaseUrl}/tournaments/?attending=1`,
+        count: this.attendingCount,
+      },
+      {
+        key: "messages",
+        label: "Messages",
+        icon: "envelope",
+        href: username ? `/u/${username}/messages` : "#",
+        count: this.unreadDmCount,
+      },
+      {
+        key: "preferences",
+        label: "Preferences",
+        icon: "gear",
+        href: username ? `/u/${username}/preferences/account` : "#",
+        count: 0,
+      },
+    ];
   }
 
   // ── Create / reply context ────────────────────────────────────────────────
@@ -201,15 +276,67 @@ export default class WboSiteNav extends Component {
   }
 
   @action
+  toggleUserMenu(event) {
+    // Prevent the outside-click handler (registered in capture on document)
+    // from immediately closing the menu we're about to open.
+    event?.stopPropagation();
+    if (this.isUserMenuOpen) {
+      this.closeUserMenu();
+    } else {
+      this.openUserMenu();
+    }
+  }
+
+  @action
   openUserMenu() {
-    // Proxy-click Discourse's user menu button (covered by WBO nav, not hidden).
-    const btn =
-      document.querySelector(
-        ".d-header-icons .header-dropdown-toggle.current-user button"
-      ) ||
-      document.querySelector(".d-header-icons .current-user button") ||
-      document.querySelector(".header-dropdown-toggle.current-user button");
-    btn?.click();
+    this.isUserMenuOpen = true;
+    this._maybeRefreshCounts();
+  }
+
+  @action
+  closeUserMenu() {
+    this.isUserMenuOpen = false;
+  }
+
+  _maybeRefreshCounts() {
+    const now = Date.now();
+    if (now - this._countsFetchedAt < COUNTS_CACHE_MS) return;
+    this._countsFetchedAt = now;
+    this._fetchAttendingCount();
+    this._fetchUnreadDmCount();
+  }
+
+  async _fetchAttendingCount() {
+    const username = this.currentUser?.username;
+    if (!username) return;
+    try {
+      const url = new URL(`${this.wboSiteBaseUrl}/wp-json/wbo/v1/user-summary`);
+      url.searchParams.set("discourse_username", username);
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        credentials: "omit",
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      this.attendingCount = Number(data?.attending_count) || 0;
+    } catch (e) {
+      // Silent — the pill is a nice-to-have; a network failure just hides it.
+    }
+  }
+
+  async _fetchUnreadDmCount() {
+    const username = this.currentUser?.username;
+    if (!username) return;
+    try {
+      const data = await ajax(
+        `/topics/private-messages-unread/${encodeURIComponent(username)}.json`
+      );
+      const topics = data?.topic_list?.topics;
+      this.unreadDmCount = Array.isArray(topics) ? topics.length : 0;
+    } catch (e) {
+      // Silent for the same reason as above.
+    }
   }
 
   @action
@@ -276,21 +403,69 @@ export default class WboSiteNav extends Component {
 
       <div class="wbo-site-nav__right">
         {{#if this.currentUser}}
-          {{! Proxy-clicks the Discourse user menu }}
-          <button
-            {{on "click" this.openUserMenu}}
-            type="button"
-            class="wbo-site-nav__user-btn"
-            aria-label="User menu"
-          >
-            <img
-              src={{this.userAvatarUrl}}
-              class="avatar"
-              width="32"
-              height="32"
-              alt={{this.currentUser.username}}
-            />
-          </button>
+          <div class="wbo-user-menu-wrap">
+            <button
+              {{on "click" this.toggleUserMenu}}
+              type="button"
+              class="wbo-site-nav__user-btn
+                {{if this.isUserMenuOpen 'is-open'}}"
+              aria-label="User menu"
+              aria-haspopup="true"
+              aria-expanded={{if this.isUserMenuOpen "true" "false"}}
+            >
+              <img
+                src={{this.userAvatarUrl}}
+                class="avatar"
+                width="32"
+                height="32"
+                alt={{this.currentUser.username}}
+              />
+            </button>
+
+            {{#if this.isUserMenuOpen}}
+              <div class="wbo-user-menu" role="menu">
+                <div class="wbo-user-menu__header">
+                  <img
+                    src={{this.userAvatarUrl}}
+                    class="wbo-user-menu__avatar"
+                    width="40"
+                    height="40"
+                    alt=""
+                  />
+                  <div class="wbo-user-menu__identity">
+                    <div
+                      class="wbo-user-menu__name"
+                    >{{this.currentUser.name}}</div>
+                    <div
+                      class="wbo-user-menu__username"
+                    >@{{this.currentUser.username}}</div>
+                  </div>
+                </div>
+                <ul class="wbo-user-menu__list">
+                  {{#each this.userMenuItems as |item|}}
+                    <li>
+                      <a
+                        href={{item.href}}
+                        class="wbo-user-menu__item"
+                        role="menuitem"
+                        {{on "click" this.closeUserMenu}}
+                      >
+                        <span class="wbo-user-menu__icon">
+                          {{icon item.icon}}
+                        </span>
+                        <span class="wbo-user-menu__label">{{item.label}}</span>
+                        {{#if item.count}}
+                          <span
+                            class="wbo-user-menu__pill"
+                          >{{item.count}}</span>
+                        {{/if}}
+                      </a>
+                    </li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+          </div>
         {{else}}
           <a href="/login" class="wbo-site-nav__login">Log in</a>
         {{/if}}
