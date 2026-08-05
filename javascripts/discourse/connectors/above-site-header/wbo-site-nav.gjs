@@ -273,18 +273,11 @@ export default class WboSiteNav extends Component {
             {{on "click" this.closeDrawer}}
           >{{item.label}}</a>
 
-          {{! Expand Community in place with Latest / Unread / categories.
-              Not an accordion — you're already in the section. }}
+          {{! Expand Community in place with Unread + categories. Tapping
+              the Community row itself already goes to /latest. Not an
+              accordion — you're already in the section. }}
           {{#if item.isCommunity}}
             <div class="wbo-nav-drawer__community">
-              <a
-                href="/latest"
-                class="wbo-nav-drawer__sublink"
-                {{on "click" this.closeDrawer}}
-              >
-                <span class="wbo-nav-drawer__sublink-label">Latest</span>
-              </a>
-
               {{#if this.currentUser}}
                 <a
                   href="/unread"
