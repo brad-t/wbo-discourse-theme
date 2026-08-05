@@ -2,6 +2,19 @@
   @include custom-card;
 }
 
+// Hide user-profile nav items WBO's setup doesn't surface:
+//   • Preferences — replaced by WordPress-side /settings/. The endpoint
+//     still works if a user pastes the URL directly, but nothing links
+//     to it from the WBO UX.
+//   • Invited — invite feature isn't in use.
+// Class naming follows Discourse's BEM `.user-nav__<slug>` on the
+// parent <li>; the wrapper is the same in the horizontal overflow nav
+// and the mobile drawer, so one rule covers all layouts.
+.user-nav__preferences,
+.user-nav__invited {
+  display: none !important;
+}
+
 .horizontal-overflow-nav {
   .nav-pills > li > a,
   .nav-pills > li button {
