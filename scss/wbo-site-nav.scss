@@ -458,10 +458,10 @@ $wbo-nav-mobile-breakpoint: 768px;
         justify-content: center;
       }
 
-      // Category prefix chip — small color square
+      // Hide category prefix chips + the All-categories icon so every
+      // label lines up at the same left edge as Latest / Unread.
       .sidebar-section-link-prefix {
-        margin-right: 0.4em;
-        flex-shrink: 0;
+        display: none;
       }
 
       // Unread indicator dot (when the user hasn't opted into count display)
