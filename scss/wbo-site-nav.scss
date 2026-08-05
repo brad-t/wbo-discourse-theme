@@ -48,22 +48,39 @@ $wbo-nav-mobile-breakpoint: 768px;
   }
 }
 
-// Mobile slide-in sidebar dropdown needs to sit above the WBO nav. The
-// desktop persistent sidebar must stay at its default z-index, otherwise
-// its top few px overlap the WBO bar.
-.sidebar-hamburger-dropdown {
-  z-index: 1100 !important;
-}
-
-// Mobile: push the full-height user menu / hamburger panels below the WBO
-// bar so the avatar stays visible (and tappable to close).
+// Mobile: push the full-height user menu below the WBO bar so the avatar
+// stays visible (and tappable to close). We intentionally do NOT list
+// .sidebar-hamburger-dropdown / .hamburger-panel here — they're killed on
+// mobile below.
 @media screen and (width <= $wbo-nav-mobile-breakpoint) {
   .menu-panel.revamped,
-  .user-menu,
-  .hamburger-panel,
-  .sidebar-hamburger-dropdown {
+  .user-menu {
     top: $wbo-nav-height !important;
     max-height: calc(100vh - #{$wbo-nav-height}) !important;
+  }
+}
+
+// ── Mobile: hide-and-lock the Discourse sidebar hamburger drawer ──────────────
+//
+// The design consolidates Discourse's mobile sidebar into the WBO drawer.
+// Suppression has to cover every path in, not just the visible button:
+//
+//   1. The header hamburger toggle (would set focus & keyboard-activate).
+//   2. The .sidebar-hamburger-dropdown panel itself (in case any code
+//      still opens it — a hidden-but-openable panel is the failure that
+//      leaves us with two drawers again).
+//   3. Discourse's core has no swipe gesture / URL for opening it, so
+//      those routes need no coverage today. Re-check on each upgrade.
+//
+// Keep this whole block together for the next upgrade to re-verify.
+@media screen and (width <= $wbo-nav-mobile-breakpoint) {
+  .d-header-icons .header-dropdown-toggle.hamburger-dropdown {
+    display: none !important;
+  }
+
+  .sidebar-hamburger-dropdown,
+  .hamburger-panel {
+    display: none !important;
   }
 }
 
@@ -276,7 +293,7 @@ $wbo-nav-mobile-breakpoint: 768px;
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 300px;
     height: 100%;
     z-index: 1009;
     background: $wbo-nav-bg;
@@ -285,6 +302,7 @@ $wbo-nav-mobile-breakpoint: 768px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     padding-top: $wbo-nav-height;
     overflow-y: auto;
+    overscroll-behavior: contain;
 
     &.is-open {
       transform: translateX(0);
@@ -323,6 +341,166 @@ $wbo-nav-mobile-breakpoint: 768px;
       }
     }
 
+    // ── Community expanded section ─────────────────────────────────────────
+    //
+    // Rendered inline under the active COMMUNITY row (not an accordion).
+    // The parent .wbo-nav-drawer__link is highlighted with the orange
+    // is-active bar; the block below it carries the section's contents.
+
+    &__community {
+      background: rgba(0, 0, 0, 0.18);
+      border-left: 3px solid var(--wbo-orange);
+      padding: 0.25em 0;
+    }
+
+    &__sublink {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      padding: 0 1.5em 0 2.5em;
+      color: rgba(255, 255, 255, 0.72);
+      text-decoration: none;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.92rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      transition: color 0.15s, background 0.15s;
+
+      &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    &__sublink-label {
+      flex: 1;
+    }
+
+    &__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.5em;
+      height: 1.5em;
+      padding: 0 0.5em;
+      background: var(--wbo-orange);
+      color: #fff;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 100px;
+    }
+
+    // Restyle the embedded Discourse CategoriesSection for our dark drawer.
+    // Rules target Discourse's own classes; they may need attention on
+    // Discourse upgrades where sidebar markup changes.
+    &__categories {
+      // Section header ("Categories") is redundant — parent COMMUNITY row
+      // is already the heading.
+      .sidebar-section-header-wrapper {
+        display: none;
+      }
+
+      .sidebar-section-content {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .sidebar-section-link-wrapper {
+        list-style: none;
+      }
+
+      .sidebar-section-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        height: 40px;
+        padding: 0 1.5em 0 2.5em !important;
+        color: rgba(255, 255, 255, 0.72) !important;
+        text-decoration: none;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.92rem;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+
+        &:hover,
+        &:focus {
+          color: #fff !important;
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        // Discourse marks the current-route link with .active
+        &.active {
+          color: #fff !important;
+          background: rgba(255, 121, 0, 0.12) !important;
+        }
+      }
+
+      // Discourse renders the count as a badge in a suffix span
+      .sidebar-section-link-content-badge {
+        min-width: 1.5em;
+        height: 1.5em;
+        padding: 0 0.5em;
+        background: var(--wbo-orange);
+        color: #fff;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 100px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      // Category prefix chip — small color square
+      .sidebar-section-link-prefix {
+        margin-right: 0.4em;
+        flex-shrink: 0;
+      }
+
+      // Unread indicator dot (when the user hasn't opted into count display)
+      .sidebar-section-link-suffix.icon.unread {
+        color: var(--wbo-orange);
+      }
+    }
+
+    &__admin {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      padding: 0 1.5em;
+      margin-top: auto;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-family: "Oswald", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      transition: color 0.15s, background 0.15s;
+
+      &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      // If both admin and logout render, admin sits above logout — the
+      // top border already gives us the divider; drop the auto-push.
+      & + .wbo-nav-drawer__logout {
+        margin-top: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+    }
+
     &__logout {
       display: flex;
       align-items: center;
@@ -358,37 +536,15 @@ $wbo-nav-mobile-breakpoint: 768px;
   }
 }
 
-// Backdrop while the Discourse mobile sidebar dropdown is open.
-// Sits below the dropdown (1100) but above everything else; blocks taps
-// on the page underneath, and tapping the backdrop itself closes the
-// sidebar (proxy-clicks the same trigger).
-.wbo-discourse-sidebar-backdrop {
-  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
-    position: fixed;
-    inset: 0;
-    z-index: 1099;
-    background: rgba(0, 0, 0, 0.55);
-    animation: wboFadeIn 0.2s ease;
-    // The above-site-header outlet renders inside .d-header-wrap, which
-    // has pointer-events:none — that inherits, so we must re-enable it
-    // here or the backdrop won't actually intercept taps.
-    pointer-events: auto !important;
-    // Suppress browser-synthesized scroll/pinch/click on touch so the
-    // backdrop's own click handler is the only thing that fires.
-    touch-action: none;
-  }
-}
-
 @keyframes wboFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-// We don't display:none the Discourse header icons or sidebar toggle —
-// the WBO nav covers them visually, and proxy-clicks need them to remain
-// in the DOM and live (display:none can drop click handlers / focus).
+// We don't display:none the Discourse header icons that we proxy-click
+// (current-user avatar) — those need to stay live so the proxy-click fires.
 
-// ── Mobile: sticky bottom bar ─────────────────────────────────────────────────
+// ── Mobile: sticky create/reply button ────────────────────────────────────────
 
 .wbo-bottom-bar {
   display: none;
@@ -396,7 +552,7 @@ $wbo-nav-mobile-breakpoint: 768px;
   @media screen and (width <= $wbo-nav-mobile-breakpoint) {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     position: fixed;
     bottom: env(safe-area-inset-bottom, 0);
     left: 0;
@@ -405,38 +561,7 @@ $wbo-nav-mobile-breakpoint: 768px;
     z-index: 1001;
     background: transparent;
     border: none;
-    pointer-events: none; // let taps fall through except on the buttons
-
-    // Floating pill-shaped sidebar button
-    &__nav {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6em;
-      padding: 1.25em;
-      background: $wbo-nav-bg;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 100px;
-      cursor: pointer;
-      color: #fff;
-      font-family: "Oswald", sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-      pointer-events: auto;
-      transition: background 0.15s, border-color 0.15s;
-
-      &:hover {
-        background: lighten(#00143c, 4%);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
-
-      .d-icon {
-        color: #ff7900;
-        font-size: 0.9rem;
-      }
-    }
+    pointer-events: none; // let taps fall through except on the button
 
     // Floating circular create / reply button
     &__create {
@@ -451,6 +576,7 @@ $wbo-nav-mobile-breakpoint: 768px;
       cursor: pointer;
       flex-shrink: 0;
       pointer-events: auto;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
       transition: background 0.15s, box-shadow 0.15s;
 
       &:hover {
@@ -466,7 +592,7 @@ $wbo-nav-mobile-breakpoint: 768px;
   }
 }
 
-// ── Mobile: add bottom padding so content isn't obscured by the bar ───────────
+// ── Mobile: add bottom padding so content isn't obscured by the button ────────
 
 @media screen and (width <= $wbo-nav-mobile-breakpoint) {
   #main-outlet-wrapper,

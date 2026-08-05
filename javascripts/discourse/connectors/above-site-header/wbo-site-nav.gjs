@@ -6,11 +6,22 @@ import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
 import { getOwner } from "@ember/application";
 import Composer from "discourse/models/composer";
+// Reuse Discourse's own categories section so we get:
+//   - unread/new counts wired to TopicTrackingState (live)
+//   - the user's own sidebar category picks (or top-N fallback)
+//   - category permissions (private categories omitted)
+//   - "All categories" link
+//   - resilience to categories being added/renamed
+// NOTE: these are internal component paths, not a public plugin API. They
+// are re-verified for each Discourse upgrade. Currently reads the running
+// instance at 2026.4.0-latest.
+import UserCategoriesSection from "discourse/components/sidebar/user/categories-section";
+import AnonymousCategoriesSection from "discourse/components/sidebar/anonymous/categories-section";
 
 const NAV_ITEMS = [
   { label: "Tournaments", url: "https://worldbeyblade.org/tournaments/" },
   { label: "Leagues", url: "https://leaderboard.fighting-spirits.org/" },
-  { label: "Community", url: "/", active: true },
+  { label: "Community", url: "/", active: true, isCommunity: true },
   {
     label: "Rules & Resources",
     url: "https://worldbeyblade.org/rules/beyblade-x-rules/",
@@ -23,90 +34,50 @@ export default class WboSiteNav extends Component {
   @service currentUser;
   @service siteSettings;
   @service composer;
+  @service topicTrackingState;
 
   @tracked isDrawerOpen = false;
-  @tracked isDiscourseSidebarOpen = false;
-
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
-
-  // Events to swallow on outside taps. pointerdown/mousedown cover modern
-  // Discourse / Float-Kit outside-tap handlers; touchstart covers iOS;
-  // click is needed to actually close the sidebar.
-  static OUTSIDE_TAP_EVENTS = [
-    "touchstart",
-    "pointerdown",
-    "mousedown",
-    "click",
-  ];
+  @tracked totalUnread = 0;
 
   constructor() {
     super(...arguments);
 
-    // Watch for Discourse's mobile sidebar dropdown mounting/unmounting so
-    // we can render a visual backdrop while it's open.
-    this._sidebarObserver = new MutationObserver(() => {
-      this.isDiscourseSidebarOpen = !!document.querySelector(
-        ".sidebar-hamburger-dropdown"
-      );
-    });
-    this._sidebarObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    // Capture-phase blocker on `window` so we run BEFORE any document-level
-    // listener regardless of registration order. While the sidebar is open,
-    // every tap landing outside it (and outside our own toggle) is
-    // swallowed before reaching Discourse's outside-tap handler — that
-    // prevents the sidebar from closing mid-touch and the synthesized
-    // click from landing on a link beneath.
-    WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
-      window.addEventListener(e, this._outsideTapBlocker, true)
+    this._refreshCounts();
+    this._trackingCallbackId = this.topicTrackingState?.onStateChange(() =>
+      this._refreshCounts()
     );
+
+    // Close the drawer on any route change — covers taps on category
+    // links rendered by Discourse's own CategoriesSection component (we
+    // don't own their click handlers) and normal back/forward navigation.
+    this.router.on("routeDidChange", this._closeOnRouteChange);
   }
 
   willDestroy() {
     super.willDestroy?.(...arguments);
-    this._sidebarObserver?.disconnect();
-    WboSiteNav.OUTSIDE_TAP_EVENTS.forEach((e) =>
-      window.removeEventListener(e, this._outsideTapBlocker, true)
-    );
+    if (this._trackingCallbackId) {
+      this.topicTrackingState?.offStateChange(this._trackingCallbackId);
+    }
+    this.router.off("routeDidChange", this._closeOnRouteChange);
   }
 
-  _suppressBlocker = false;
-
-  _outsideTapBlocker = (event) => {
-    if (this._suppressBlocker) return;
-    const sidebar = document.querySelector(".sidebar-hamburger-dropdown");
-    if (!sidebar) return; // no-op when sidebar isn't open
-    const t = event.target;
-    if (!t || sidebar.contains(t)) return;
-    // Allow our own toggle button (and the backdrop itself) to work
-    if (t.closest?.(".wbo-bottom-bar__nav")) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    // Only close on click — touch-/pointer-/mousedown all fire ahead of
-    // the click in a single tap; closing on the down-event would unmount
-    // the backdrop and let the click leak through to the link below.
-    if (event.type === "click") {
-      // Suppress ourselves while proxy-clicking Discourse's hamburger;
-      // otherwise the synthesized click re-enters this handler (target
-      // is inside .d-header-icons, not the sidebar) and gets swallowed
-      // before Discourse's listener sees it.
-      this._suppressBlocker = true;
-      try {
-        this.toggleSidebar();
-      } finally {
-        this._suppressBlocker = false;
-      }
+  _closeOnRouteChange = () => {
+    if (this.isDrawerOpen) {
+      this.isDrawerOpen = false;
     }
   };
+
+  _refreshCounts() {
+    if (!this.currentUser) {
+      this.totalUnread = 0;
+      return;
+    }
+    this.totalUnread = this.topicTrackingState?.countUnread?.() ?? 0;
+  }
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
   get logoUrl() {
-    // Discourse stores the logo as a site setting; fall back to DOM if needed
     return (
       this.siteSettings.logo_url ||
       this.siteSettings.logo ||
@@ -119,6 +90,12 @@ export default class WboSiteNav extends Component {
     return this.currentUser?.avatar_template?.replace("{size}", "45") ?? null;
   }
 
+  get CategoriesSection() {
+    return this.currentUser
+      ? UserCategoriesSection
+      : AnonymousCategoriesSection;
+  }
+
   // ── Create / reply context ────────────────────────────────────────────────
 
   get currentTopic() {
@@ -126,8 +103,6 @@ export default class WboSiteNav extends Component {
     if (!route.startsWith("topic.")) {
       return null;
     }
-    // The topic controller's model is the live topic with `details` populated.
-    // Falls back to router attributes for early renders.
     const owner = getOwner(this);
     const topicController = owner?.lookup?.("controller:topic");
     return (
@@ -152,8 +127,8 @@ export default class WboSiteNav extends Component {
     if (t.archived || t.closed) return false;
 
     // Discourse's canonical check — covers permissions, consecutive-reply
-    // throttling, post limits, group restrictions, etc. Be conservative:
-    // if we can't determine the flag, hide the button rather than show a
+    // throttling, post limits, group restrictions, etc. Conservative: if
+    // we can't determine the flag, hide the button rather than show a
     // broken one.
     const details = t.details ?? t.get?.("details");
     const flag =
@@ -209,30 +184,6 @@ export default class WboSiteNav extends Component {
       ) ||
       document.querySelector(".d-header-icons .current-user button") ||
       document.querySelector(".header-dropdown-toggle.current-user button");
-    btn?.click();
-  }
-
-  @action
-  absorbBackdropTouch(event) {
-    // Stop touchstart from bubbling to the document. Discourse's outside-tap
-    // handler runs on touch, not click — if we don't block it, it closes the
-    // sidebar before the synthesized click is dispatched, the backdrop
-    // unmounts, and the click lands on whatever element is now under the
-    // finger (the dreaded ghost click).
-    event.stopPropagation();
-  }
-
-  @action
-  toggleSidebar() {
-    // Desktop uses .header-sidebar-toggle; mobile uses the hamburger dropdown
-    // in .d-header-icons. Try each in order.
-    const btn =
-      document.querySelector(".header-sidebar-toggle button") ||
-      document.querySelector(
-        ".d-header-icons .header-dropdown-toggle.hamburger-dropdown button"
-      ) ||
-      document.querySelector(".hamburger-dropdown button") ||
-      document.querySelector(".hamburger-dropdown");
     btn?.click();
   }
 
@@ -321,8 +272,54 @@ export default class WboSiteNav extends Component {
             class="wbo-nav-drawer__link {{if item.active 'is-active'}}"
             {{on "click" this.closeDrawer}}
           >{{item.label}}</a>
+
+          {{! Expand Community in place with Latest / Unread / categories.
+              Not an accordion — you're already in the section. }}
+          {{#if item.isCommunity}}
+            <div class="wbo-nav-drawer__community">
+              <a
+                href="/latest"
+                class="wbo-nav-drawer__sublink"
+                {{on "click" this.closeDrawer}}
+              >
+                <span class="wbo-nav-drawer__sublink-label">Latest</span>
+              </a>
+
+              {{#if this.currentUser}}
+                <a
+                  href="/unread"
+                  class="wbo-nav-drawer__sublink"
+                  {{on "click" this.closeDrawer}}
+                >
+                  <span class="wbo-nav-drawer__sublink-label">Unread</span>
+                  {{#if this.totalUnread}}
+                    <span
+                      class="wbo-nav-drawer__badge"
+                    >{{this.totalUnread}}</span>
+                  {{/if}}
+                </a>
+              {{/if}}
+
+              {{! Discourse's category section, restyled by our scss.
+                  Reused for counts, permissions, and drift resilience. }}
+              <div class="wbo-nav-drawer__categories">
+                <this.CategoriesSection @collapsable={{false}} />
+              </div>
+            </div>
+          {{/if}}
         {{/each}}
       </nav>
+
+      {{#if this.currentUser.admin}}
+        {{! Admin isn't in Discourse's mobile user menu, so give staff a
+            reachable footer link now that the second toggle is gone. }}
+        <a
+          href="/admin"
+          class="wbo-nav-drawer__admin"
+          {{on "click" this.closeDrawer}}
+        >Admin</a>
+      {{/if}}
+
       {{#if this.currentUser}}
         <a
           href="/logout"
@@ -342,29 +339,8 @@ export default class WboSiteNav extends Component {
       ></div>
     {{/if}}
 
-    {{! ── Mobile: backdrop for Discourse's sidebar dropdown ────────────── }}
-    {{#if this.isDiscourseSidebarOpen}}
-      {{! template-lint-disable no-invalid-interactive }}
-      <div
-        {{on "touchstart" this.absorbBackdropTouch}}
-        {{on "click" this.toggleSidebar}}
-        class="wbo-discourse-sidebar-backdrop"
-        role="presentation"
-      ></div>
-    {{/if}}
-
-    {{! ── Mobile: sticky bottom bar ────────────────────────────────────── }}
+    {{! ── Mobile: sticky create/reply button ─────────────────────────── }}
     <div class="wbo-bottom-bar">
-      <button
-        {{on "click" this.toggleSidebar}}
-        type="button"
-        class="wbo-bottom-bar__nav"
-        aria-label="Open sidebar"
-      >
-        {{icon "angles-right"}}
-        <span class="wbo-bottom-bar__label">Community</span>
-      </button>
-
       {{#if this.showCreateButton}}
         <button
           {{on "click" this.createOrReply}}
