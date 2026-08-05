@@ -349,7 +349,6 @@ $wbo-nav-mobile-breakpoint: 768px;
 
     &__community {
       background: rgba(0, 0, 0, 0.18);
-      border-left: 3px solid var(--wbo-orange);
       padding: 0.25em 0;
     }
 
@@ -358,7 +357,7 @@ $wbo-nav-mobile-breakpoint: 768px;
       align-items: center;
       justify-content: space-between;
       height: 40px;
-      padding: 0 1.5em 0 2.5em;
+      padding: 0 1.5em;
       color: rgba(255, 255, 255, 0.72);
       text-decoration: none;
       font-family: "Rubik", sans-serif;
@@ -418,7 +417,7 @@ $wbo-nav-mobile-breakpoint: 768px;
         align-items: center;
         gap: 0.5em;
         height: 40px;
-        padding: 0 1.5em 0 2.5em !important;
+        padding: 0 1.5em !important;
         color: rgba(255, 255, 255, 0.72) !important;
         text-decoration: none;
         font-family: "Rubik", sans-serif;
