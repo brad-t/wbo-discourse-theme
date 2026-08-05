@@ -34,18 +34,11 @@ export default class WboSiteNav extends Component {
   @service currentUser;
   @service siteSettings;
   @service composer;
-  @service topicTrackingState;
 
   @tracked isDrawerOpen = false;
-  @tracked totalUnread = 0;
 
   constructor() {
     super(...arguments);
-
-    this._refreshCounts();
-    this._trackingCallbackId = this.topicTrackingState?.onStateChange(() =>
-      this._refreshCounts()
-    );
 
     // Close the drawer on any route change — covers taps on category
     // links rendered by Discourse's own CategoriesSection component (we
@@ -55,9 +48,6 @@ export default class WboSiteNav extends Component {
 
   willDestroy() {
     super.willDestroy?.(...arguments);
-    if (this._trackingCallbackId) {
-      this.topicTrackingState?.offStateChange(this._trackingCallbackId);
-    }
     this.router.off("routeDidChange", this._closeOnRouteChange);
   }
 
@@ -66,14 +56,6 @@ export default class WboSiteNav extends Component {
       this.isDrawerOpen = false;
     }
   };
-
-  _refreshCounts() {
-    if (!this.currentUser) {
-      this.totalUnread = 0;
-      return;
-    }
-    this.totalUnread = this.topicTrackingState?.countUnread?.() ?? 0;
-  }
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
@@ -273,26 +255,12 @@ export default class WboSiteNav extends Component {
             {{on "click" this.closeDrawer}}
           >{{item.label}}</a>
 
-          {{! Expand Community in place with Unread + categories. Tapping
-              the Community row itself already goes to /latest. Not an
-              accordion — you're already in the section. }}
+          {{! Expand Community in place with the category list. Tapping
+              Community routes to /latest; Unread lives in the discovery
+              page's top-menu pill row, so we don't repeat it here. Not
+              an accordion — you're already in the section. }}
           {{#if item.isCommunity}}
             <div class="wbo-nav-drawer__community">
-              {{#if this.currentUser}}
-                <a
-                  href="/unread"
-                  class="wbo-nav-drawer__sublink"
-                  {{on "click" this.closeDrawer}}
-                >
-                  <span class="wbo-nav-drawer__sublink-label">Unread</span>
-                  {{#if this.totalUnread}}
-                    <span
-                      class="wbo-nav-drawer__badge"
-                    >{{this.totalUnread}}</span>
-                  {{/if}}
-                </a>
-              {{/if}}
-
               {{! Discourse's category section, restyled by our scss.
                   Reused for counts, permissions, and drift resilience. }}
               <div class="wbo-nav-drawer__categories">

@@ -352,46 +352,6 @@ $wbo-nav-mobile-breakpoint: 768px;
       padding: 0.25em 0;
     }
 
-    &__sublink {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 40px;
-      padding: 0 1.5em;
-      color: rgba(255, 255, 255, 0.72);
-      text-decoration: none;
-      font-family: "Rubik", sans-serif;
-      font-size: 0.92rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      text-transform: none;
-      transition: color 0.15s, background 0.15s;
-
-      &:hover {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.05);
-      }
-    }
-
-    &__sublink-label {
-      flex: 1;
-    }
-
-    &__badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.5em;
-      height: 1.5em;
-      padding: 0 0.5em;
-      background: var(--wbo-orange);
-      color: #fff;
-      font-family: "Rubik", sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 100px;
-    }
-
     // Restyle the embedded Discourse CategoriesSection for our dark drawer.
     // Rules target Discourse's own classes; they may need attention on
     // Discourse upgrades where sidebar markup changes.
