@@ -357,7 +357,11 @@ $wbo-nav-mobile-breakpoint: 768px;
       align-items: center;
       justify-content: space-between;
       height: 40px;
-      padding: 0 1.5em;
+      // Right padding matches other rows (1.5em). Left padding is the
+      // same 1.5em plus space for the category chip (20px) and its
+      // margin (0.4em) so Latest / Unread labels align with category
+      // labels, which sit after their chip.
+      padding: 0 1.5em 0 calc(1.5em + 20px + 0.4em);
       color: rgba(255, 255, 255, 0.72);
       text-decoration: none;
       font-family: "Rubik", sans-serif;
@@ -458,10 +462,12 @@ $wbo-nav-mobile-breakpoint: 768px;
         justify-content: center;
       }
 
-      // Hide category prefix chips + the All-categories icon so every
-      // label lines up at the same left edge as Latest / Unread.
+      // Category prefix chip — small color square (or the list icon on the
+      // All-categories row). Kept visible; Latest / Unread get a matching
+      // left offset via .wbo-nav-drawer__sublink so all labels align.
       .sidebar-section-link-prefix {
-        display: none;
+        margin-right: 0.4em;
+        flex-shrink: 0;
       }
 
       // Unread indicator dot (when the user hasn't opted into count display)
