@@ -357,11 +357,7 @@ $wbo-nav-mobile-breakpoint: 768px;
       align-items: center;
       justify-content: space-between;
       height: 40px;
-      // Right padding matches other rows (1.5em). Left padding is the
-      // same 1.5em plus space for the category chip (20px) and its
-      // margin (0.4em) so Latest / Unread labels align with category
-      // labels, which sit after their chip.
-      padding: 0 1.5em 0 calc(1.5em + 20px + 0.4em);
+      padding: 0 1.5em;
       color: rgba(255, 255, 255, 0.72);
       text-decoration: none;
       font-family: "Rubik", sans-serif;
