@@ -18,22 +18,6 @@
   display: none !important;
 }
 
-// Reorder user-profile nav so the tabs people actually read come
-// first. The container (.user-nav) is `display: flex` in stock
-// Discourse, so `order:` works directly. Unspecified items get
-// order:100 by default — that keeps anything Discourse adds later
-// (e.g. Bookmarks, Drafts) between the named-first three and Admin
-// at the end.
-.user-nav {
-  li[class*="user-nav__"] { order: 100; }
-
-  .user-nav__messages      { order: 1; }
-  .user-nav__notifications { order: 2; }
-  .user-nav__activity      { order: 3; }
-
-  .user-nav__admin         { order: 999; }
-}
-
 .horizontal-overflow-nav {
   .nav-pills > li > a,
   .nav-pills > li button {
