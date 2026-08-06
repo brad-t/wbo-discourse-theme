@@ -14,11 +14,15 @@ export default class CustomCategoryBanner extends Component {
     return this.router.currentRoute?.attributes?.tag;
   }
 
+  get hasBackground() {
+    return !!this.category?.uploaded_background?.url;
+  }
+
   get bannerBg() {
     return htmlSafe(
-      `background: url("${this.category.uploaded_background?.url}");
-       background-size: cover; 
-       background-position: center center;;`
+      `background: url("${this.category.uploaded_background.url}");
+       background-size: cover;
+       background-position: center center;`
     );
   }
 
@@ -49,27 +53,27 @@ export default class CustomCategoryBanner extends Component {
   <template>
     {{#if this.category}}
       <div class="custom-category-banner">
-        {{#if this.category.uploaded_logo.url}}
+        {{#if this.hasBackground}}
           <div
             class="custom-category-banner_background"
             style={{this.bannerBg}}
           >
-            <CategoryLogo @category={{this.category}} />
+            {{#if this.category.uploaded_logo.url}}
+              <CategoryLogo @category={{this.category}} />
+            {{/if}}
           </div>
         {{/if}}
         <div class="custom-category-banner_meta" style={{this.categoryBgColor}}>
-          {{#unless this.category.uploaded_logo.url}}
-            <div class="custom-category-banner_meta-text">
-              <h1>
-                <a
-                  href="/c/{{this.categorySlug}}"
-                  style={{this.categoryTextColor}}
-                >
-                  {{this.category.name}}
-                </a>
-              </h1>
-            </div>
-          {{/unless}}
+          <div class="custom-category-banner_meta-text">
+            <h1>
+              <a
+                href="/c/{{this.categorySlug}}/{{this.category.id}}"
+                style={{this.categoryTextColor}}
+              >
+                {{this.category.name}}
+              </a>
+            </h1>
+          </div>
         </div>
       </div>
     {{/if}}

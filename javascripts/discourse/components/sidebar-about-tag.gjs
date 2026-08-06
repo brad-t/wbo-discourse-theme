@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
-import { getOwner } from "@ember/owner";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import didUpdate from "@ember/render-modifiers/modifiers/did-update";
 import { service } from "@ember/service";
@@ -34,12 +33,6 @@ export default class SidebarAboutTag extends Component {
     return this.router.currentRoute?.attributes?.category;
   }
 
-  get linkedDescription() {
-    return i18n(themePrefix("about_tag_admin_tip_description"), {
-      topicUrl: "test",
-    });
-  }
-
   @action
   async getTagInfo() {
     if (this.routeTag) {
@@ -48,12 +41,6 @@ export default class SidebarAboutTag extends Component {
     } else {
       this.tag = null;
     }
-  }
-
-  @action
-  toggleInfo() {
-    const controller = getOwner(this).lookup("controller:tag.show");
-    controller.toggleProperty("showInfo");
   }
 
   @action

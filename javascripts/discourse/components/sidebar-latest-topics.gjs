@@ -55,20 +55,17 @@ export default class LatestTopicsSidebar extends Component {
         eyeline issues with loading more topics on }}
         <div class="custom-right-sidebar_recent-topics-wrapper">
           {{! template-lint-disable no-nested-interactive }}
-          <a
-            class="custom-topic-layout"
-            href="{{topic.url}}/{{topic.last_read_post_number}}"
-          >
+          <a class="custom-topic-layout" href={{topic.url}}>
             <div class="custom-topic-layout_meta">
-              {{#unless this.hideCategory}}
-                {{#unless topic.isPinnedUncategorized}}
-                  {{categoryLink topic.category}}
-                  <span class="bullet-separator">&bull;</span>
-                {{/unless}}
+              {{#unless topic.isPinnedUncategorized}}
+                {{categoryLink topic.category}}
+                <span class="bullet-separator">&bull;</span>
               {{/unless}}
 
               <span class="custom-topic-layout_meta-posted">
-                <span class="custom-topic-layout_meta-posted-by">Posted by</span>
+                <span
+                  class="custom-topic-layout_meta-posted-by"
+                >{{i18n (themePrefix "posted_by")}}</span>
                 <a
                   data-user-card={{get topic.posters "0.user.username"}}
                   href="/u/{{get topic.posters '0.user.username'}}"
@@ -87,7 +84,7 @@ export default class LatestTopicsSidebar extends Component {
             </h2>
 
             <div class="link-bottom-line">
-              {{discourseTags topic mode="list" tagsForUser=this.tagsForUser}}
+              {{discourseTags topic mode="list"}}
             </div>
 
             {{#if topic.thumbnails}}

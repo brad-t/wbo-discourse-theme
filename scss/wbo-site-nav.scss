@@ -423,8 +423,7 @@ $wbo-nav-mobile-breakpoint: 768px;
       }
 
       // Category prefix chip — small color square (or the list icon on the
-      // All-categories row). Kept visible; Latest / Unread get a matching
-      // left offset via .wbo-nav-drawer__sublink so all labels align.
+      // All-categories row).
       .sidebar-section-link-prefix {
         margin-right: 0.4em;
         flex-shrink: 0;
