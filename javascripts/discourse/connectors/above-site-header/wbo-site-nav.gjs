@@ -60,12 +60,7 @@ export default class WboSiteNav extends Component {
   // ── Getters ───────────────────────────────────────────────────────────────
 
   get logoUrl() {
-    return (
-      this.siteSettings.logo_url ||
-      this.siteSettings.logo ||
-      document.querySelector(".d-header .logo img")?.src ||
-      null
-    );
+    return this.siteSettings.logo_url || this.siteSettings.logo || null;
   }
 
   get userAvatarUrl() {
@@ -192,7 +187,15 @@ export default class WboSiteNav extends Component {
     <nav class="wbo-site-nav" aria-label="WBO site navigation">
       <a href="https://worldbeyblade.org" class="wbo-site-nav__logo">
         {{#if this.logoUrl}}
-          <img src={{this.logoUrl}} alt="WBO" height="36" />
+          {{! width/height are intrinsic (natural 512x166) so the browser
+              reserves the correct space before the image decodes -- without
+              them, the nav links reflow ~89px on every page load. }}
+          <img
+            src={{this.logoUrl}}
+            alt="WBO"
+            width="108"
+            height="35"
+          />
         {{else}}
           <span class="wbo-site-nav__logo-text">WBO</span>
         {{/if}}

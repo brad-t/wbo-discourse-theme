@@ -91,6 +91,10 @@ $wbo-nav-mobile-breakpoint: 768px;
   top: 0;
   left: 0;
   right: 0;
+  // border-box so the 1px border-bottom is contained within
+  // $wbo-nav-height. Without this, the bar renders at 57px and
+  // overlaps the top 5px of every page (--header-offset is 56).
+  box-sizing: border-box;
   height: $wbo-nav-height;
   z-index: 1002;
   background: $wbo-nav-bg;
@@ -114,7 +118,7 @@ $wbo-nav-mobile-breakpoint: 768px;
 
     img {
       display: block;
-      height: 36px;
+      height: 35px;
       width: auto;
     }
   }

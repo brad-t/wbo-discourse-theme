@@ -9,6 +9,16 @@
   --wbo-card-radius: 10px;
 }
 
+// The WBO nav overlays Discourse's .d-header at position:fixed top:0
+// (see scss/wbo-site-nav.scss). Discourse's own --header-offset is derived
+// from .d-header's measured height, which is unrelated to the WBO bar. Pin
+// it to the WBO bar's height so #main-outlet-wrapper (and every sticky
+// element that reads --header-offset) clears the nav instead of sliding
+// under it. !important because core may reassign this at runtime.
+body {
+  --header-offset: 56px !important;
+}
+
 @mixin custom-card {
   box-sizing: border-box;
   padding: 0.75em;
