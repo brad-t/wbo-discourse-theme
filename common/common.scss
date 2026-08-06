@@ -390,18 +390,21 @@ h4 { font-size: 18px; }
 // specificity above core's plain `.btn-primary:hover`.
 .discourse-no-touch
   .btn:not(.btn-icon, [class*="popup-menu-btn"]):hover {
-  --btn-fill: 40%;
+  // Big fill jump (20% -> 60%) so accented buttons clearly "fill in" on
+  // hover -- 40% over a dark surface was too subtle to read as a state
+  // change.
+  --btn-fill: 60%;
   border-width: 2px;
   border-style: solid;
   border-color: var(--btn-accent);
   // Two layers so EVERY button shows a hover, not just accented ones:
   //   - background-image: the accent tint (orange for primary, etc.)
-  //   - background-color: a subtle white wash beneath it
+  //   - background-color: a white wash beneath it
   // For btn-default (--btn-accent: transparent) the tint layer is
-  // transparent, so the white wash is what makes the hover visible --
-  // previously default buttons went transparent -> transparent (no
-  // change at all). The wash composites correctly on any surface.
-  background-color: rgba(255, 255, 255, 0.08);
+  // transparent, so the wash is the whole hover -- otherwise default
+  // buttons went transparent -> transparent (no change). The wash
+  // composites correctly on any surface.
+  background-color: rgba(255, 255, 255, 0.1);
   background-image: linear-gradient(
     color-mix(in srgb, var(--btn-accent) var(--btn-fill), transparent),
     color-mix(in srgb, var(--btn-accent) var(--btn-fill), transparent)
