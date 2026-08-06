@@ -1,10 +1,9 @@
-// Oswald is loaded at 700 ONLY, on purpose: the design calls for Oswald
-// to always render bold (headings, titles, nav -- read or unread). With
-// a single weight available, any `font-weight` on an Oswald element
-// (400/500/600) maps to 700 via the CSS font-matching algorithm, so we
-// don't have to chase per-element weight overrides or Discourse's
-// read/unread title-weight variables. Rubik keeps its full weight range.
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Rubik:wght@400;500;600&display=swap");
+// Oswald is used at exactly two weights: 500 for all-caps (uppercased)
+// UI text, 700 for everything else (headings, titles). Rubik carries the
+// body range. (Loading a single Oswald weight to force bold does NOT
+// work -- a locally-installed Oswald supplies every weight regardless of
+// what we @import -- so weights are controlled per-element in CSS below.)
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Rubik:wght@400;500;600&display=swap");
 
 :root {
   --d-button-border-radius: 100px;
@@ -13,6 +12,12 @@
   --topic-body-width: 900px;
   --d-nav-underline-height: 0;
   --wbo-card-radius: 10px;
+
+  // Topic-list titles are Oswald and must stay bold regardless of
+  // read/unread state. Discourse drives their weight through these two
+  // vars (default 400 for both); pin them to 700.
+  --topic-title-font-weight: 700;
+  --topic-title-font-weight--visited: 700;
 }
 
 // The WBO nav overlays Discourse's .d-header at position:fixed top:0

@@ -24,7 +24,8 @@ body.category,
 }
 
 #suggested-topics-title {
-  font-weight: normal;
+  // Oswald heading ("New & Unread Topics") -> bold.
+  font-weight: 700;
 }
 
 .category-breadcrumb {
@@ -185,7 +186,8 @@ div.education {
 
   h2 {
     margin: 0 !important;
-    font-weight: normal;
+    // Oswald title -> bold. See common.scss font-weight rule.
+    font-weight: 700;
     font-size: var(--font-up-2);
   }
 

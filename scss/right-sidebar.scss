@@ -94,6 +94,8 @@
       font-size: var(--font-down-2);
       margin-top: 0.25em;
       text-transform: uppercase;
+      // All-caps Oswald -> 500 (overrides the heading block's 700).
+      font-weight: 500;
     }
 
     h2 {
