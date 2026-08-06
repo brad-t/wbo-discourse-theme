@@ -72,11 +72,20 @@
 //      renders flush against the bottom of the previous post's last
 //      line with no visual breathing room.
 .small-action.time-gap {
-  margin-block: 1.5em;
+  margin-block: 0.75em;
 
   .small-action-desc,
   .topic-avatar {
     border-top-color: var(--redditish-border-color);
+  }
+
+  // Core sets .small-action-desc's width to calc(--topic-body-width +
+  // --topic-body-width-padding), which on narrow viewports exceeds the
+  // container and forces the desc to overflow horizontally. Let it fill
+  // its flex parent instead.
+  .small-action-desc {
+    width: auto;
+    flex: 1 1 auto;
   }
 }
 

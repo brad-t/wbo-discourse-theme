@@ -161,10 +161,11 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
 }
 
 #topic-progress-wrapper {
-  // Space above/below and off the right edge so the wrapper doesn't
-  // sit flush against the card's border below it (the wrapper renders
-  // inline at the end of the topic content on mobile).
-  margin: 1em 0.75em 1em 0;
+  // Core adds `padding: 0 8px` and default margins around this tiny
+  // 130-170px control. Zero them out and give minimal margin so the
+  // wrapper doesn't float in a big empty box.
+  padding: 0;
+  margin: 0.5em 0.5em 0.5em 0;
 
   // Core gives .nums z-index: 1 to stack above the .bg progress fill.
   // A prior version of this file forced `position: static`, which
