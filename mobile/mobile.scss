@@ -161,10 +161,12 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
 }
 
 #topic-progress-wrapper {
-  // Core adds `padding: 0 8px` and default margins around this tiny
-  // 130-170px control. Zero them out and give minimal margin so the
-  // wrapper doesn't float in a big empty box.
-  padding: 0;
+  // Discourse's uc-modernize-foundation-theme adds
+  //   `.uc-modernize-foundation-theme #topic-progress-wrapper
+  //     { padding-inline: var(--space-2) }`
+  // which wins on specificity (adds a body-class layer). !important
+  // matches the intent to keep the wrapper zero-padded and tight.
+  padding: 0 !important;
   margin: 0.5em 0.5em 0.5em 0;
 
   // Core gives .nums z-index: 1 to stack above the .bg progress fill.
