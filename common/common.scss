@@ -341,7 +341,31 @@ h4 { font-size: 18px; }
 .btn:not(.btn-icon, [class*="popup-menu-btn"]) {
   --btn-accent: transparent;
   --btn-fill: 20%;
-  border: 2px solid var(--btn-accent);
+  // Longhands (not `border` shorthand) so a core hover rule that only
+  // re-sets one longhand can't clobber the others by accident. Even so,
+  // we still need to re-assert on :hover -- see below.
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--btn-accent);
+  background: color-mix(in srgb, var(--btn-accent) var(--btn-fill), transparent);
+}
+
+// Core's per-variant hover rules use SHORTHAND:
+//   .discourse-no-touch .btn-primary:hover {
+//     border: var(--d-button-primary-border--hover);  // = 1px solid transparent
+//     background-color: var(--d-button-primary-bg-color--hover);
+//     color: var(--d-button-primary-text-color--hover);
+//   }
+// The shorthand parses to all four border longhands, so our 2px width AND
+// our accent colour get wiped -- the button visibly shrinks 2px and loses
+// its accent on hover. Re-assert the mechanism. `:not(...)` bumps
+// specificity above core's plain `.btn-primary:hover`.
+.discourse-no-touch
+  .btn:not(.btn-icon, [class*="popup-menu-btn"]):hover {
+  --btn-fill: 35%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--btn-accent);
   background: color-mix(in srgb, var(--btn-accent) var(--btn-fill), transparent);
 }
 
@@ -351,9 +375,7 @@ h4 { font-size: 18px; }
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 
   .discourse-no-touch &:hover {
-    // Bump the fill on hover instead of retinting; keeps the accent
-    // stable and works on any surface.
-    --btn-fill: 35%;
+    // Colour is also clobbered by core's hover shorthand; re-assert.
     color: var(--primary);
   }
 }
