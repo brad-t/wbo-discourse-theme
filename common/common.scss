@@ -1,4 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap");
+// Oswald is loaded at 700 ONLY, on purpose: the design calls for Oswald
+// to always render bold (headings, titles, nav -- read or unread). With
+// a single weight available, any `font-weight` on an Oswald element
+// (400/500/600) maps to 700 via the CSS font-matching algorithm, so we
+// don't have to chase per-element weight overrides or Discourse's
+// read/unread title-weight variables. Rubik keeps its full weight range.
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Rubik:wght@400;500;600&display=swap");
 
 :root {
   --d-button-border-radius: 100px;
