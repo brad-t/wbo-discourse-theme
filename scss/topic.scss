@@ -260,9 +260,12 @@
   #topic-progress-wrapper {
     --d-border-radius: 100px;
 
+    // Wrench admin button -- strip the boxy border so it reads as just
+    // an icon button next to the progress pill (not a bordered square).
     .topic-admin-menu-button .toggle-admin-menu {
-      border-right: none;
-      border-radius: var(--d-border-radius) 0 0 var(--d-border-radius);
+      border: none !important;
+      background: transparent;
+      border-radius: var(--d-border-radius);
       height: 100%;
     }
   }

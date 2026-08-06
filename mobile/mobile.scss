@@ -144,10 +144,13 @@ body.category,
 }
 
 html:not(.footer-nav-visible) #topic-progress-wrapper {
-  // The .wbo-bottom-bar reply circle docks bottom-right (52px button +
-  // 12px padding = ~76px tall). The default 1em (16px) bottom offset
-  // put the progress indicator directly behind it. Lift it above.
-  bottom: calc(env(safe-area-inset-bottom) + 5.5em);
+  // Dock to bottom-LEFT so the progress indicator stays clear of the
+  // .wbo-bottom-bar reply circle at bottom-right. Core positions it
+  // right-aligned by default; force left with !important because a
+  // core rule sets `right: 0` at higher specificity in some modes.
+  bottom: calc(env(safe-area-inset-bottom) + 1em);
+  left: 0.75em !important;
+  right: auto !important;
 }
 
 #topic-progress {
@@ -199,8 +202,9 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   #topic-progress-wrapper
   .topic-admin-menu-button
   .toggle-admin-menu {
-  border-right: none;
-  border-radius: 100px 0 0 100px;
+  border: none !important;
+  background: transparent;
+  border-radius: 100px;
 }
 
 .category-boxes,
