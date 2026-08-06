@@ -320,9 +320,12 @@
 
 // Hide the topic map entirely (both the --op summary under the first post
 // and the --bottom variant). None of its stats -- views, likes, users,
-// links -- are useful for this community.
+// links -- are useful for this community. Core sets it via
+// `body:not(.archetype-private_message) .topic-map { display: flex }`
+// (specificity 0,3,0), so use !important to beat it without a body-class
+// selector arms race.
 .topic-map {
-  display: none;
+  display: none !important;
 }
 
 .map:first-of-type .buttons .btn {
