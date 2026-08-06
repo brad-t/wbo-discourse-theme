@@ -269,6 +269,35 @@ h6,
 .category-name {
   font-family: "Oswald", sans-serif;
   letter-spacing: 0.02em;
+  // WordPress renders every heading at 700; the theme was inheriting
+  // Discourse's modular ratio ladder instead (topic title landed at
+  // 28px/400 vs WP's 40px/700 -- most important text on a topic page,
+  // 12px smaller and 300 weights lighter than the equivalent WP heading)
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+// Fixed heading sizes matching WordPress (style.css:491-497). Overrides
+// Discourse's --font-up-* modular scale where each heading is a ratio of
+// the base rather than a designed value.
+h1 {
+  font-size: 32px;
+  @media screen and (min-width: 720px) {
+    font-size: 40px;
+  }
+}
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
+h4 { font-size: 18px; }
+
+// #topic-title h1 needs the same treatment -- it's under an ID selector
+// so the generic h1 rule loses; be explicit.
+#topic-title h1 {
+  font-size: 32px;
+  @media screen and (min-width: 720px) {
+    font-size: 40px;
+  }
 }
 
 // ── WBO Accent Colour (orange) ────────────────────────────────────────────────
