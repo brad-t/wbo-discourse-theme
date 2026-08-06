@@ -80,12 +80,15 @@
   }
 
   // Core sets .small-action-desc's width to calc(--topic-body-width +
-  // --topic-body-width-padding), which on narrow viewports exceeds the
-  // container and forces the desc to overflow horizontally. Let it fill
-  // its flex parent instead.
+  // --topic-body-width-padding) plus 12px left padding, so "N days
+  // later" sits 12px off the container's left edge AND overflows on
+  // narrow viewports. Let it fill the flex parent naturally and align
+  // its text with the container edge (matches everything else in the
+  // post stream that reads left-flush).
   .small-action-desc {
     width: auto;
     flex: 1 1 auto;
+    padding-left: 0;
   }
 }
 

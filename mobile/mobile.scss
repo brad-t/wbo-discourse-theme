@@ -144,7 +144,10 @@ body.category,
 }
 
 html:not(.footer-nav-visible) #topic-progress-wrapper {
-  bottom: calc(env(safe-area-inset-bottom) + 1em);
+  // The .wbo-bottom-bar reply circle docks bottom-right (52px button +
+  // 12px padding = ~76px tall). The default 1em (16px) bottom offset
+  // put the progress indicator directly behind it. Lift it above.
+  bottom: calc(env(safe-area-inset-bottom) + 5.5em);
 }
 
 #topic-progress {
@@ -167,7 +170,11 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   // which wins on specificity (adds a body-class layer). !important
   // matches the intent to keep the wrapper zero-padded and tight.
   padding: 0 !important;
-  margin: 0.5em 0.5em 0.5em 0;
+  // Flush with container edges (no offset). When docked at the bottom
+  // via position:fixed it aligns to the viewport corner; when inline
+  // it aligns to its content column. Reply-button collision is handled
+  // separately by lifting `bottom` above the reply circle above.
+  margin: 0;
 
   // Core gives .nums z-index: 1 to stack above the .bg progress fill.
   // A prior version of this file forced `position: static`, which
