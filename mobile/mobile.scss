@@ -143,57 +143,46 @@ body.category,
   }
 }
 
-// Dock the whole .topic-navigation container (which holds
-// #topic-progress-wrapper + the wrench admin button when present) at
-// bottom-left, so both stay clear of the .wbo-bottom-bar reply circle
-// on the right. Positioning the parent (not #topic-progress-wrapper
-// alone) lets us lay out both children together with a gap and reverse
-// their order so the wrench sits to the right of the progress pill.
+// Dock .topic-navigation (the fixed ancestor) at bottom-left so the
+// whole progress control stays clear of the .wbo-bottom-bar reply
+// circle at bottom-right.
 html:not(.footer-nav-visible) .topic-navigation {
   position: fixed !important;
   bottom: calc(env(safe-area-inset-bottom) + 1em);
   left: 0.75em !important;
   right: auto !important;
   width: auto !important;
-  display: flex !important;
-  // Normal row order puts the wrench (which follows the progress
-  // wrapper in the DOM) to the RIGHT of the progress pill.
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5em;
   z-index: 400;
 }
 
-// #topic-progress-wrapper itself: reset to static so the parent's
-// positioning applies. Zero margin so items sit tight against each
-// other (the parent's gap handles spacing).
+// #topic-progress-wrapper is the actual flex container holding, in DOM
+// order, [ wrench button, nav#topic-progress ]. So THIS is where the
+// wrench-vs-pill layout happens (not .topic-navigation, which only wraps
+// the wrapper). row-reverse puts the wrench -- first in the DOM -- to
+// the RIGHT of the pill; gap spaces them; stretch makes the wrench the
+// same height as the pill so a circular wrench matches the pill's height.
 html:not(.footer-nav-visible) #topic-progress-wrapper {
   position: static !important;
   margin: 0 !important;
-  bottom: auto !important;
-  left: auto !important;
-  right: auto !important;
-}
-
-// Vertically centre the "N / M" numbers inside the progress pill.
-// A prior theme rule set `.nums { top: 0.5em }` (with position:relative
-// added recently for the z-index stacking fix), which shifted the text
-// ~8px below centre. Zero the offset -- core's flexbox align-items
-// already centres them.
-#topic-progress .nums {
-  top: 0 !important;
+  inset: auto !important;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  gap: 0.5em;
 }
 
 #topic-progress {
   --d-border-radius: 100px;
-  margin-right: 0.5em;
-  margin-left: 0;
+  margin: 0;
   border-radius: 100px;
   border: 1px solid var(--primary-low-mid);
   overflow: hidden;
 
+  // Vertically centre the "N / M" numbers. Core lays them out with
+  // flex align-items: center already; a stray `top` offset (left over
+  // from an earlier tweak) pushed them below centre. Pin to 0.
   .nums {
-    top: 0.5em;
+    top: 0;
   }
 }
 
@@ -229,22 +218,22 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   padding-inline: 1em;
 }
 
-// Wrench admin button in .topic-navigation (sibling of
-// #topic-progress-wrapper, NOT a child of it). Give it the same pill
-// surface as the progress indicator (--secondary fill + --tertiary-low
-// hairline, fully rounded) so it stays visible over white post images
-// -- but drop the default boxy square-cornered admin-button chrome.
-// Covers both older and newer Discourse markup.
-.topic-navigation .topic-admin-menu-button,
-.topic-navigation .toggle-admin-menu,
-.topic-navigation .topic-admin-menu-trigger,
-.topic-navigation button[class*="admin-menu"] {
+// Wrench admin button. Real markup (verified): it's the FIRST child of
+// #topic-progress-wrapper --
+//   button.topic-admin-menu-trigger.toggle-admin-menu.btn.btn-icon
+// Give it the same pill surface as the progress indicator (--secondary
+// fill + --tertiary-low hairline, fully rounded) so it stays legible
+// over white post images, but drop the default square admin-button box.
+// aspect-ratio 1 + stretched height from the wrapper makes it a circle
+// matching the pill's height.
+#topic-progress-wrapper .toggle-admin-menu {
   background: var(--secondary) !important;
   border: 1px solid var(--tertiary-low) !important;
   border-radius: 100px !important;
-  // Square-ish tap target that reads as a circle with the pill radius.
-  width: 44px;
-  height: 44px;
+  aspect-ratio: 1;
+  height: auto;
+  width: auto;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;

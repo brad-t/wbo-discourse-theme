@@ -252,29 +252,40 @@
   #topic-progress-wrapper #topic-progress {
     border: 1px solid var(--primary-400);
 
+    // Numbers vertically centred (core's flex align-items handles it;
+    // pin the stray offset to 0).
     .nums {
-      top: 0.1em;
+      top: 0;
     }
   }
 
   #topic-progress-wrapper {
     --d-border-radius: 100px;
+    // wrench (first child) → right of the pill, with a gap; stretch so
+    // the circular wrench matches the pill height.
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: stretch;
+    gap: 0.5em;
   }
 
   // Wrench admin button -- give it the same pill surface as the progress
   // indicator (--secondary fill + --tertiary-low hairline, fully rounded)
   // so it stays legible over white post images, but drop the default
-  // square-cornered admin-button chrome. The button is a sibling of
-  // #topic-progress-wrapper inside .topic-navigation (NOT a child), so
-  // the selector scopes from .topic-navigation. Covers both the older
-  // .toggle-admin-menu markup and newer .topic-admin-menu-trigger.
-  .topic-navigation .topic-admin-menu-button,
-  .topic-navigation .toggle-admin-menu,
-  .topic-navigation .topic-admin-menu-trigger,
-  .topic-navigation button[class*="admin-menu"] {
+  // square-cornered admin-button chrome. Verified markup: the button is
+  // the first CHILD of #topic-progress-wrapper (class .toggle-admin-menu
+  // .topic-admin-menu-trigger).
+  #topic-progress-wrapper .toggle-admin-menu {
     background: var(--secondary) !important;
     border: 1px solid var(--tertiary-low) !important;
     border-radius: 100px !important;
+    aspect-ratio: 1;
+    height: auto;
+    width: auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
