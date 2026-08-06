@@ -296,27 +296,3 @@ h6,
   outline-color: var(--wbo-blue);
 }
 
-// ── WBO Dark Mode Surface Colours ────────────────────────────────────────────
-
-@if not is-light-color-scheme() {
-  .d-header {
-    background: #051129;
-  }
-
-  #topic-title {
-    background: #051129;
-
-    h1 a {
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .badge-category__name,
-    .discourse-tag.simple {
-      color: rgba(255, 255, 255, 0.65);
-    }
-  }
-
-  .posts-wrapper {
-    background: #051129;
-  }
-}
