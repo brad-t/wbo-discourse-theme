@@ -24,8 +24,8 @@ body.category,
 }
 
 #suggested-topics-title {
-  // Oswald heading ("New & Unread Topics") -> bold.
-  font-weight: 700;
+  // h3 -> 500 per the Oswald weight rule (700 is h1/h2 only).
+  font-weight: 500;
 }
 
 .category-breadcrumb {

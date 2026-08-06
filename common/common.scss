@@ -13,11 +13,12 @@
   --d-nav-underline-height: 0;
   --wbo-card-radius: 10px;
 
-  // Topic-list titles are Oswald and must stay bold regardless of
-  // read/unread state. Discourse drives their weight through these two
-  // vars (default 400 for both); pin them to 700.
-  --topic-title-font-weight: 700;
-  --topic-title-font-weight--visited: 700;
+  // Topic-list titles that render through Discourse's default markup
+  // (not the .custom-topic-layout h2 cards) aren't h1/h2, so per the
+  // Oswald weight rule they're 500 -- pinned for both read and unread so
+  // state doesn't change the weight.
+  --topic-title-font-weight: 500;
+  --topic-title-font-weight--visited: 500;
 }
 
 // The WBO nav overlays Discourse's .d-header at position:fixed top:0
@@ -298,11 +299,9 @@ h6,
 .topic-title a,
 .category-name {
   font-family: "Oswald", sans-serif;
-  // WordPress renders every heading at 700; the theme was inheriting
-  // Discourse's modular ratio ladder instead (topic title landed at
-  // 28px/400 vs WP's 40px/700 -- most important text on a topic page,
-  // 12px smaller and 300 weights lighter than the equivalent WP heading)
-  font-weight: 700;
+  // Oswald weight rule: 700 for h1 & h2, 500 everywhere else. 500 is the
+  // default here; the h1/h2 override follows the size rules below.
+  font-weight: 500;
   line-height: 1.15;
   margin-bottom: 8px;
 }
@@ -327,6 +326,17 @@ h4 { font-size: 18px; }
   @media screen and (min-width: 720px) {
     font-size: 40px;
   }
+}
+
+// Oswald weight 700 for h1 & h2 (and the titles rendered as h1/h2:
+// #topic-title h1, .fancy-title inside the topic h1, .custom-topic-layout
+// h2). Everything else Oswald stays at the 500 default set above.
+h1,
+h2,
+#topic-title h1,
+.fancy-title,
+.custom-topic-layout h2 {
+  font-weight: 700;
 }
 
 // ── WBO Accent Colour (orange) ────────────────────────────────────────────────

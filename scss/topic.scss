@@ -245,8 +245,8 @@
 
 .topic-list-bottom {
   h3 {
-    // Oswald heading -> bold.
-    font-weight: 700;
+    // h3 -> 500 per the Oswald weight rule (700 is h1/h2 only).
+    font-weight: 500;
     line-height: 1.2;
   }
 
@@ -333,8 +333,8 @@
 }
 
 h3.suggested-topics-message {
-  // Oswald heading -> bold.
-  font-weight: 700;
+  // h3 -> 500 per the Oswald weight rule (700 is h1/h2 only).
+  font-weight: 500;
 }
 
 .more-topics__container .nav {
