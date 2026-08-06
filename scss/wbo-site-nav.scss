@@ -169,6 +169,15 @@ $wbo-nav-mobile-breakpoint: 719px;
     border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
 
+    // Core's `a:visited { color: var(--d-link-color) }` (0,1,1) outweighs
+    // the base `.wbo-site-nav__link` colour (0,1,0), so visited nav links
+    // fell through to Discourse's blue. Re-assert the nav colour on
+    // :visited at (0,2,0). (hover / is-active follow in source order and
+    // win when they also apply.)
+    &:visited {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
     &:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.06);
@@ -228,6 +237,10 @@ $wbo-nav-mobile-breakpoint: 719px;
     text-decoration: none;
     border-radius: 100px;
     transition: background 0.15s;
+
+    &:visited {
+      color: #fff;
+    }
 
     &:hover {
       background: darken(#ff7900, 8%);
@@ -352,6 +365,12 @@ $wbo-nav-mobile-breakpoint: 719px;
       text-transform: uppercase;
       border-left: 3px solid transparent;
       transition: color 0.15s, background 0.15s;
+
+      // Same as the desktop links: stop visited drawer links falling
+      // through to core's blue a:visited colour.
+      &:visited {
+        color: rgba(255, 255, 255, 0.75);
+      }
 
       &:hover {
         color: #fff;
