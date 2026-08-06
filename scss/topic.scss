@@ -264,7 +264,13 @@
   }
 
   #topic-progress-wrapper #topic-progress {
-    border: 1px solid var(--primary-400);
+    // Match the wrench: --tertiary-low border (this is what core sets by
+    // default; the theme was overriding it to a greyish --primary-400,
+    // which is why the pill and wrench borders looked inconsistent).
+    // Background is the body colour, not the card surface, so the pill
+    // reads clearly on top of the navy card.
+    border: 1px solid var(--tertiary-low);
+    background: var(--redditish-bg-color);
 
     // Numbers vertically centred (core's flex align-items handles it;
     // pin the stray offset to 0).
@@ -290,7 +296,7 @@
   // the first CHILD of #topic-progress-wrapper (class .toggle-admin-menu
   // .topic-admin-menu-trigger).
   #topic-progress-wrapper .toggle-admin-menu {
-    background: var(--secondary) !important;
+    background: var(--redditish-bg-color) !important;
     border: 1px solid var(--tertiary-low) !important;
     border-radius: 100px !important;
     aspect-ratio: 1;

@@ -175,7 +175,11 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   --d-border-radius: 100px;
   margin: 0;
   border-radius: 100px;
-  border: 1px solid var(--primary-low-mid);
+  // Border + background come from the shared rule in topic.scss
+  // (.container.posts #topic-progress-wrapper #topic-progress): the
+  // --tertiary-low border that matches the wrench, and the body-colour
+  // background. Don't re-declare a border here (a greyish --primary-low-mid
+  // used to live on this line and caused the pill/wrench mismatch).
   overflow: hidden;
 
   // Vertically centre the "N / M" numbers. Core lays them out with
@@ -234,7 +238,7 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
 // aspect-ratio 1 + stretched height from the wrapper makes it a circle
 // matching the pill's height.
 #topic-progress-wrapper .toggle-admin-menu {
-  background: var(--secondary) !important;
+  background: var(--redditish-bg-color) !important;
   border: 1px solid var(--tertiary-low) !important;
   border-radius: 100px !important;
   aspect-ratio: 1;
