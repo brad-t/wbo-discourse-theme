@@ -188,6 +188,17 @@ body {
   color: inherit;
 }
 
+// Core re-colours the icon on hover via
+// `.discourse-no-touch .btn-primary:hover .d-icon { color:
+// var(--d-button-primary-icon-color--hover) }` -- a dark value at
+// specificity (0,4,0) that beat the inherit rule above (0,3,0), so the
+// icon flipped dark on hover while the label stayed light. Re-assert
+// inherit on hover at higher specificity so the icon keeps matching the
+// text in both states.
+.discourse-no-touch .btn:not(.no-text):hover .d-icon {
+  color: inherit;
+}
+
 .btn[class*="popup-menu-btn"] {
   border: none;
 }
