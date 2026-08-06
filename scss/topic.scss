@@ -261,18 +261,19 @@
     --d-border-radius: 100px;
   }
 
-  // Wrench admin button -- strip the boxy border/background so it reads
-  // as a plain icon button next to the progress pill. The button is a
-  // sibling of #topic-progress-wrapper inside .topic-navigation (NOT a
-  // child), so the selector needs to scope from .topic-navigation.
-  // Covers both the older .topic-admin-menu-button > .toggle-admin-menu
-  // markup and newer .topic-admin-menu-trigger button variants.
+  // Wrench admin button -- give it the same pill surface as the progress
+  // indicator (--secondary fill + --tertiary-low hairline, fully rounded)
+  // so it stays legible over white post images, but drop the default
+  // square-cornered admin-button chrome. The button is a sibling of
+  // #topic-progress-wrapper inside .topic-navigation (NOT a child), so
+  // the selector scopes from .topic-navigation. Covers both the older
+  // .toggle-admin-menu markup and newer .topic-admin-menu-trigger.
   .topic-navigation .topic-admin-menu-button,
   .topic-navigation .toggle-admin-menu,
   .topic-navigation .topic-admin-menu-trigger,
   .topic-navigation button[class*="admin-menu"] {
-    border: none !important;
-    background: transparent !important;
+    background: var(--secondary) !important;
+    border: 1px solid var(--tertiary-low) !important;
     border-radius: 100px !important;
   }
 }

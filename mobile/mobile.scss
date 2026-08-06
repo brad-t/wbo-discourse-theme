@@ -156,7 +156,9 @@ html:not(.footer-nav-visible) .topic-navigation {
   right: auto !important;
   width: auto !important;
   display: flex !important;
-  flex-direction: row-reverse; // wrench (comes first in DOM) → right
+  // Normal row order puts the wrench (which follows the progress
+  // wrapper in the DOM) to the RIGHT of the progress pill.
+  flex-direction: row;
   align-items: center;
   gap: 0.5em;
   z-index: 400;
@@ -228,16 +230,24 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
 }
 
 // Wrench admin button in .topic-navigation (sibling of
-// #topic-progress-wrapper, NOT a child of it). Strip the boxy border
-// and background so it reads as a plain icon button next to the
-// progress pill. Covers both older and newer Discourse markup.
+// #topic-progress-wrapper, NOT a child of it). Give it the same pill
+// surface as the progress indicator (--secondary fill + --tertiary-low
+// hairline, fully rounded) so it stays visible over white post images
+// -- but drop the default boxy square-cornered admin-button chrome.
+// Covers both older and newer Discourse markup.
 .topic-navigation .topic-admin-menu-button,
 .topic-navigation .toggle-admin-menu,
 .topic-navigation .topic-admin-menu-trigger,
 .topic-navigation button[class*="admin-menu"] {
-  border: none !important;
-  background: transparent !important;
+  background: var(--secondary) !important;
+  border: 1px solid var(--tertiary-low) !important;
   border-radius: 100px !important;
+  // Square-ish tap target that reads as a circle with the pill radius.
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .category-boxes,
