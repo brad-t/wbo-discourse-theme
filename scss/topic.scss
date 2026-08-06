@@ -64,12 +64,16 @@
 }
 
 // The "N days later" separator between posts is a .small-action whose
-// desc + avatar carry a border-top for the HR line. Core sets that colour
-// to --content-border-color (rgb 56,56,56 on this scheme -- same wrong
-// grey the composer had before P1-3). Retarget to the WBO hairline and
-// add a little breathing room above/below so it doesn't crowd the
-// neighbouring posts.
+// desc + avatar carry a border-top for the HR line. Two problems:
+//   1. Core coloured the HR --content-border-color (rgb 56,56,56 on this
+//      scheme -- same wrong grey the composer had before P1-3).
+//   2. The .small-action has 0 margin, and the neighbouring .topic-post
+//      elements also have 0 margin/padding on their edges, so the HR
+//      renders flush against the bottom of the previous post's last
+//      line with no visual breathing room.
 .small-action.time-gap {
+  margin-block: 1.5em;
+
   .small-action-desc,
   .topic-avatar {
     border-top-color: var(--redditish-border-color);
