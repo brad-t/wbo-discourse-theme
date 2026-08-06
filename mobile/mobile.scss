@@ -163,8 +163,13 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
 #topic-progress-wrapper {
   margin-bottom: 1em;
 
+  // Core gives .nums z-index: 1 to stack above the .bg progress fill.
+  // A prior version of this file forced `position: static`, which
+  // nullified the z-index (only positioned elements observe z-index),
+  // and the .bg fill then obscured the current-post number as reading
+  // progressed. Keep .nums positioned so z-index actually stacks it.
   #topic-progress .nums {
-    position: static;
+    position: relative;
   }
 }
 

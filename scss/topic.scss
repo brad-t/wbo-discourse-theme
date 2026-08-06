@@ -98,6 +98,17 @@
   display: none;
 }
 
+// Discourse core adds a mobile-only rule
+//   .more-topics__container .more-topics__list .topic-list-header.--has-tabs
+//     { display: flex }
+// that beats the plain .topic-list-header hide above by specificity, and
+// the resulting header renders as a 34px-wide, 1680px-tall vertical strip
+// on the left edge of the "New & Unread Topics" section -- with "Topic"
+// text clipped by the viewport. Match core's specificity to keep it hidden.
+.more-topics__container .more-topics__list .topic-list-header.--has-tabs {
+  display: none;
+}
+
 .topic-list-body {
   width: 100%;
 }
