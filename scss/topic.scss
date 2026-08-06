@@ -63,6 +63,20 @@
   }
 }
 
+// Divider between consecutive posts. The theme strips core's per-post
+// top border for owner posts (above), and core draws none between
+// same-author posts, so back-to-back replies rendered with 0px between
+// them -- no separator at all. Add a hairline with breathing room
+// between directly-adjacent posts. Posts separated by a .time-gap keep
+// the gap as their divider (the adjacent-sibling combinator only matches
+// a .topic-post immediately following another .topic-post, so a
+// .time-gap in between suppresses this).
+.post-stream .topic-post + .topic-post {
+  border-top: 1px solid var(--redditish-border-color);
+  margin-top: 1.5em;
+  padding-top: 1.5em;
+}
+
 // The "N days later" separator between posts is a .small-action whose
 // desc + avatar carry a border-top for the HR line. Two problems:
 //   1. Core coloured the HR --content-border-color (rgb 56,56,56 on this

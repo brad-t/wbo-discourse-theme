@@ -218,6 +218,13 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   padding-inline: 1em;
 }
 
+// The wrapper's 24px bottom padding left too much empty space below the
+// last post's reply row (which itself already has ~8px beneath it).
+// Trim it.
+.posts-wrapper {
+  padding-bottom: 0.75em;
+}
+
 // Wrench admin button. Real markup (verified): it's the FIRST child of
 // #topic-progress-wrapper --
 //   button.topic-admin-menu-trigger.toggle-admin-menu.btn.btn-icon
