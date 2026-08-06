@@ -1,0 +1,47 @@
+// ── WBO Post Styling ──────────────────────────────────────────────────────────
+//
+// Ported from WP's .t-discourse-post design (style.css:4683-4983) so posts
+// on the forum read the same as posts embedded on tournament pages.
+//
+// AVATAR SIZE INTENTIONALLY UNCHANGED. WP uses 32px; Discourse defaults to
+// 48px and its post layout (topic-avatar width, side padding, mobile
+// collapse) is calibrated around 48. Reducing without a visual pass tends
+// to leave dead space around the smaller avatar. Follow-up.
+
+.topic-post {
+  // Username. Previously rendered rgb(120,166,252) = --secondary-low, a
+  // periwinkle nowhere in the WBO palette. Match WP: readable label
+  // colour, tighter size, heavier weight.
+  .names .first .username a,
+  .names .full-name a,
+  .names .username a {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  // Timestamp -- quieter than the username, sits to the right.
+  .post-info .post-date,
+  .post-info.post-date {
+    color: var(--primary-medium);
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  // Body copy -- slightly tighter and softer than the default 16px/1.5.
+  .cooked {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--primary);
+  }
+
+  // Body links -- accessibility fix (WCAG 1.4.1). On a card, colour is
+  // the only signal distinguishing a link from body text; add the
+  // underline that WordPress uses. Mentions and hashtags supply their
+  // own text-decoration:none via core, so this doesn't affect them.
+  .cooked a {
+    color: var(--wbo-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
