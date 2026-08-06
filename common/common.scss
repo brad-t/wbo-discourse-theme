@@ -167,9 +167,14 @@ body {
     height: auto;
     // Match the WP button typography for a coherent site-wide feel.
     font-weight: 600;
-    letter-spacing: 0.04em;
     text-transform: capitalize;
   }
+}
+
+// Icons inside text-bearing buttons should be the same colour as the
+// button's text (icon-only buttons keep their own icon colours).
+.btn:not(.no-text) .d-icon {
+  color: inherit;
 }
 
 .btn[class*="popup-menu-btn"] {
@@ -271,7 +276,6 @@ h6,
 .topic-title a,
 .category-name {
   font-family: "Oswald", sans-serif;
-  letter-spacing: 0.02em;
   // WordPress renders every heading at 700; the theme was inheriting
   // Discourse's modular ratio ladder instead (topic title landed at
   // 28px/400 vs WP's 40px/700 -- most important text on a topic page,
@@ -374,7 +378,7 @@ h4 { font-size: 18px; }
 .btn-primary:not(.btn-icon, [class*="popup-menu-btn"]) {
   --btn-accent: var(--wbo-orange);
   color: var(--primary);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 
   .discourse-no-touch &:hover {
     // Colour is also clobbered by core's hover shorthand; re-assert.
