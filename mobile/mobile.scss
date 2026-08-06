@@ -143,18 +143,43 @@ body.category,
   }
 }
 
-html:not(.footer-nav-visible) #topic-progress-wrapper {
-  // Dock to bottom-LEFT so the progress indicator stays clear of the
-  // .wbo-bottom-bar reply circle at bottom-right. Core rendered the
-  // wrapper as position:static in the layout, so the previous
-  // left/right/bottom values were ignored (positioning offsets only
-  // apply to positioned elements). Force position:fixed so the
-  // wrapper actually docks.
+// Dock the whole .topic-navigation container (which holds
+// #topic-progress-wrapper + the wrench admin button when present) at
+// bottom-left, so both stay clear of the .wbo-bottom-bar reply circle
+// on the right. Positioning the parent (not #topic-progress-wrapper
+// alone) lets us lay out both children together with a gap and reverse
+// their order so the wrench sits to the right of the progress pill.
+html:not(.footer-nav-visible) .topic-navigation {
   position: fixed !important;
   bottom: calc(env(safe-area-inset-bottom) + 1em);
   left: 0.75em !important;
   right: auto !important;
+  width: auto !important;
+  display: flex !important;
+  flex-direction: row-reverse; // wrench (comes first in DOM) → right
+  align-items: center;
+  gap: 0.5em;
   z-index: 400;
+}
+
+// #topic-progress-wrapper itself: reset to static so the parent's
+// positioning applies. Zero margin so items sit tight against each
+// other (the parent's gap handles spacing).
+html:not(.footer-nav-visible) #topic-progress-wrapper {
+  position: static !important;
+  margin: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+// Vertically centre the "N / M" numbers inside the progress pill.
+// A prior theme rule set `.nums { top: 0.5em }` (with position:relative
+// added recently for the z-index stacking fix), which shifted the text
+// ~8px below centre. Zero the offset -- core's flexbox align-items
+// already centres them.
+#topic-progress .nums {
+  top: 0 !important;
 }
 
 #topic-progress {
@@ -202,13 +227,17 @@ html:not(.footer-nav-visible) #topic-progress-wrapper {
   padding-inline: 1em;
 }
 
-.container.posts
-  #topic-progress-wrapper
-  .topic-admin-menu-button
-  .toggle-admin-menu {
+// Wrench admin button in .topic-navigation (sibling of
+// #topic-progress-wrapper, NOT a child of it). Strip the boxy border
+// and background so it reads as a plain icon button next to the
+// progress pill. Covers both older and newer Discourse markup.
+.topic-navigation .topic-admin-menu-button,
+.topic-navigation .toggle-admin-menu,
+.topic-navigation .topic-admin-menu-trigger,
+.topic-navigation button[class*="admin-menu"] {
   border: none !important;
-  background: transparent;
-  border-radius: 100px;
+  background: transparent !important;
+  border-radius: 100px !important;
 }
 
 .category-boxes,

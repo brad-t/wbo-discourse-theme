@@ -259,15 +259,21 @@
 
   #topic-progress-wrapper {
     --d-border-radius: 100px;
+  }
 
-    // Wrench admin button -- strip the boxy border so it reads as just
-    // an icon button next to the progress pill (not a bordered square).
-    .topic-admin-menu-button .toggle-admin-menu {
-      border: none !important;
-      background: transparent;
-      border-radius: var(--d-border-radius);
-      height: 100%;
-    }
+  // Wrench admin button -- strip the boxy border/background so it reads
+  // as a plain icon button next to the progress pill. The button is a
+  // sibling of #topic-progress-wrapper inside .topic-navigation (NOT a
+  // child), so the selector needs to scope from .topic-navigation.
+  // Covers both the older .topic-admin-menu-button > .toggle-admin-menu
+  // markup and newer .topic-admin-menu-trigger button variants.
+  .topic-navigation .topic-admin-menu-button,
+  .topic-navigation .toggle-admin-menu,
+  .topic-navigation .topic-admin-menu-trigger,
+  .topic-navigation button[class*="admin-menu"] {
+    border: none !important;
+    background: transparent !important;
+    border-radius: 100px !important;
   }
 }
 
