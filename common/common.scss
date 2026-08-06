@@ -328,14 +328,12 @@ h4 { font-size: 18px; }
   }
 }
 
-// Oswald weight 700 for h1 & h2 (and the titles rendered as h1/h2:
-// #topic-title h1, .fancy-title inside the topic h1, .custom-topic-layout
-// h2). Everything else Oswald stays at the 500 default set above.
+// Oswald weight 700 for h1 only (and the titles rendered as the page h1:
+// #topic-title h1, .fancy-title inside the topic h1). Everything else
+// Oswald -- h2 included -- stays at the 500 default set above.
 h1,
-h2,
 #topic-title h1,
-.fancy-title,
-.custom-topic-layout h2 {
+.fancy-title {
   font-weight: 700;
 }
 

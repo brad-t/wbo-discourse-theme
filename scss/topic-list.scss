@@ -186,8 +186,8 @@ div.education {
 
   h2 {
     margin: 0 !important;
-    // Oswald title -> bold. See common.scss font-weight rule.
-    font-weight: 700;
+    // h2 -> 500 per the Oswald weight rule (700 is h1 only).
+    font-weight: 500;
     font-size: var(--font-up-2);
   }
 
