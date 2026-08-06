@@ -18,7 +18,11 @@ import Composer from "discourse/models/composer";
 import UserCategoriesSection from "discourse/components/sidebar/user/categories-section";
 import AnonymousCategoriesSection from "discourse/components/sidebar/anonymous/categories-section";
 
-const NAV_ITEMS = [
+// Fallback used when the `nav_items` theme setting is empty or malformed.
+// The setting (settings.yml) holds the same shape as JSON and is the
+// source of truth in normal operation -- edit the menu there, no deploy
+// needed. Kept in sync as the safety net.
+const DEFAULT_NAV_ITEMS = [
   { label: "Tournaments", url: "https://worldbeyblade.org/tournaments/" },
   { label: "Leagues", url: "https://leaderboard.fighting-spirits.org/" },
   { label: "Community", url: "/", active: true, isCommunity: true },
@@ -58,6 +62,23 @@ export default class WboSiteNav extends Component {
   };
 
   // ── Getters ───────────────────────────────────────────────────────────────
+
+  get navItems() {
+    // `settings` is the theme-settings global injected into theme JS.
+    const raw = settings.nav_items;
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) {
+          return parsed;
+        }
+      } catch {
+        // Malformed JSON in the setting -- fall through to the default
+        // so the nav never renders empty.
+      }
+    }
+    return DEFAULT_NAV_ITEMS;
+  }
 
   get logoUrl() {
     return this.siteSettings.logo_url || this.siteSettings.logo || null;
@@ -184,52 +205,57 @@ export default class WboSiteNav extends Component {
 
   <template>
     {{! ── Desktop nav bar (covers .d-header at same z-level) ──────────── }}
+    {{! .wbo-site-nav is the full-bleed fixed bar; .wbo-site-nav__inner
+        is the 1200px-max centred content, mirroring WordPress's
+        .site-header / .site-header-inner split. }}
     <nav class="wbo-site-nav" aria-label="WBO site navigation">
-      <a href="https://worldbeyblade.org" class="wbo-site-nav__logo">
-        {{#if this.logoUrl}}
-          {{! width/height are intrinsic (natural 512x166) so the browser
-              reserves the correct space before the image decodes -- without
-              them, the nav links reflow ~89px on every page load. }}
-          <img
-            src={{this.logoUrl}}
-            alt="WBO"
-            width="108"
-            height="35"
-          />
-        {{else}}
-          <span class="wbo-site-nav__logo-text">WBO</span>
-        {{/if}}
-      </a>
-
-      <div class="wbo-site-nav__links">
-        {{#each NAV_ITEMS as |item|}}
-          <a
-            href={{item.url}}
-            class="wbo-site-nav__link {{if item.active 'is-active'}}"
-          >{{item.label}}</a>
-        {{/each}}
-      </div>
-
-      <div class="wbo-site-nav__right">
-        {{#if this.currentUser}}
-          {{! Proxy-clicks the Discourse user menu }}
-          <button
-            {{on "click" this.openUserMenu}}
-            type="button"
-            class="wbo-site-nav__user-btn"
-            aria-label="User menu"
-          >
+      <div class="wbo-site-nav__inner">
+        <a href="https://worldbeyblade.org" class="wbo-site-nav__logo">
+          {{#if this.logoUrl}}
+            {{! width/height are intrinsic (natural 512x166) so the browser
+                reserves the correct space before the image decodes -- without
+                them, the nav links reflow ~89px on every page load. }}
             <img
-              src={{this.userAvatarUrl}}
-              class="avatar"
-              width="32"
-              height="32"
-              alt={{this.currentUser.username}}
+              src={{this.logoUrl}}
+              alt="WBO"
+              width="108"
+              height="35"
             />
-          </button>
-        {{else}}
-          <a href="/login" class="wbo-site-nav__login">Log in</a>
-        {{/if}}
+          {{else}}
+            <span class="wbo-site-nav__logo-text">WBO</span>
+          {{/if}}
+        </a>
+
+        <div class="wbo-site-nav__links">
+          {{#each this.navItems as |item|}}
+            <a
+              href={{item.url}}
+              class="wbo-site-nav__link {{if item.active 'is-active'}}"
+            >{{item.label}}</a>
+          {{/each}}
+        </div>
+
+        <div class="wbo-site-nav__right">
+          {{#if this.currentUser}}
+            {{! Proxy-clicks the Discourse user menu }}
+            <button
+              {{on "click" this.openUserMenu}}
+              type="button"
+              class="wbo-site-nav__user-btn"
+              aria-label="User menu"
+            >
+              <img
+                src={{this.userAvatarUrl}}
+                class="avatar"
+                width="32"
+                height="32"
+                alt={{this.currentUser.username}}
+              />
+            </button>
+          {{else}}
+            <a href="/login" class="wbo-site-nav__login">Log in</a>
+          {{/if}}
+        </div>
       </div>
     </nav>
 
@@ -251,7 +277,7 @@ export default class WboSiteNav extends Component {
       aria-hidden={{if this.isDrawerOpen "false" "true"}}
     >
       <nav>
-        {{#each NAV_ITEMS as |item|}}
+        {{#each this.navItems as |item|}}
           <a
             href={{item.url}}
             class="wbo-nav-drawer__link {{if item.active 'is-active'}}"

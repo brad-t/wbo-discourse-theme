@@ -1,3 +1,9 @@
 hide_topic_footer_controls:
   default: true
   description: "Hides the reply/bookmark/share buttons at the bottom of each topic"
+
+nav_items:
+  type: string
+  textarea: true
+  default: '[{"label":"Tournaments","url":"https://worldbeyblade.org/tournaments/"},{"label":"Leagues","url":"https://leaderboard.fighting-spirits.org/"},{"label":"Community","url":"/","active":true,"isCommunity":true},{"label":"Rules & Resources","url":"https://worldbeyblade.org/rules/beyblade-x-rules/"},{"label":"About WBO","url":"#"}]'
+  description: "Primary nav menu as a JSON array. Each item: {\"label\":\"…\",\"url\":\"…\"}. Add \"active\":true to underline an item, and \"isCommunity\":true on the one item whose mobile drawer entry expands into the category list. Malformed JSON falls back to the built-in default."

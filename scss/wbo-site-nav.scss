@@ -9,7 +9,10 @@
 
 $wbo-nav-bg: #00143c;
 $wbo-nav-height: 56px;
-$wbo-nav-mobile-breakpoint: 768px;
+// 719px matches WordPress's drawer breakpoint (WP shows the full nav at
+// >=720). The theme was switching to the hamburger at 768, so 720-767px
+// viewports showed a hamburger on the forum and the full nav on WP.
+$wbo-nav-mobile-breakpoint: 719px;
 
 // .d-header-wrap is the real stacking-context root at z-index:1000. It is
 // the parent of .d-header AND the menu / sidebar panels, so no descendant
@@ -102,10 +105,19 @@ $wbo-nav-mobile-breakpoint: 768px;
   // Re-enable interactivity (parent .d-header-wrap is pointer-events:none)
   pointer-events: auto;
 
-  display: flex;
-  align-items: center;
-  padding: 0 1.25em;
-  gap: 0;
+  // ── Inner: constrained, centred content (mirrors WP .site-header-inner) ──
+  // The bar itself stays full-bleed (background + border span the viewport);
+  // this wrapper caps the content at 1200px and centres it, matching the
+  // WordPress header so the logo/links sit in the same place on both halves.
+  &__inner {
+    max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
 
   // ── Logo ──────────────────────────────────────────────────────────────────
 
@@ -148,7 +160,9 @@ $wbo-nav-mobile-breakpoint: 768px;
     color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
     font-family: "Oswald", sans-serif;
-    font-size: 0.9rem;
+    // 1.1rem (17.6px) matches WordPress's nav link size -- the previous
+    // 0.9rem (14.4px) was 18% smaller and read as "a different site".
+    font-size: 1.1rem;
     font-weight: 500;
     letter-spacing: 0;
     text-transform: uppercase;
@@ -224,9 +238,14 @@ $wbo-nav-mobile-breakpoint: 768px;
   // ── Mobile: hide just the link row, keep logo + user/login ────────────────
 
   @media screen and (width <= $wbo-nav-mobile-breakpoint) {
-    padding-left: 0;
-    padding-right: 0.75em;
+    &__inner {
+      padding-left: 0;
+      padding-right: 0.75em;
+    }
 
+    // Absolute -> centres on the fixed bar (the viewport), since __inner
+    // is not a positioned ancestor. Keeps the logo centred between the
+    // hamburger (left) and the avatar (right) on mobile.
     &__logo {
       position: absolute;
       left: 50%;
