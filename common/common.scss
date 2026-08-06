@@ -408,8 +408,27 @@ h4 { font-size: 18px; }
   );
 }
 
+// Accented button variants. Mirroring WordPress (style.css:416-420), each
+// variant sets ONLY --btn-accent -- the base .btn rule above turns that into
+// the 2px border + translucent fill. Without these, btn-danger / btn-success
+// kept the default transparent accent and rendered invisible (a delete
+// confirmation button you couldn't see).
 .btn-primary:not(.btn-icon, [class*="popup-menu-btn"]) {
   --btn-accent: var(--wbo-orange);
+}
+.btn-danger:not(.btn-icon, [class*="popup-menu-btn"]) {
+  --btn-accent: var(--danger);
+}
+.btn-success:not(.btn-icon, [class*="popup-menu-btn"]) {
+  --btn-accent: var(--success);
+}
+
+// Shared label treatment for the accented variants: a readable light label
+// over the translucent fill (WP uses color: var(--text) on the base .btn;
+// on this dark-only scheme that's --primary = white).
+.btn-primary:not(.btn-icon, [class*="popup-menu-btn"]),
+.btn-danger:not(.btn-icon, [class*="popup-menu-btn"]),
+.btn-success:not(.btn-icon, [class*="popup-menu-btn"]) {
   color: var(--primary);
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 
