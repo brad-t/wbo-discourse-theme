@@ -80,6 +80,16 @@
   }
 }
 
+// .topic-timer-info sits in a .loading-container below .posts-wrapper. It's
+// meant to show "Topic will auto-close in N days" style notices, but on a
+// topic without a timer it renders empty with just a stray 1px border-top
+// (in core's rgb 56,56,56), drawing a phantom HR right under the card. Kill
+// the border unconditionally -- if Discourse ever surfaces a real timer
+// message, the content still renders, just without the top divider.
+.topic-timer-info {
+  border-top: 0;
+}
+
 .names span.first {
   font-weight: normal;
 }
