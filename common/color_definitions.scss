@@ -25,7 +25,11 @@ $redditish-border-highlight-color: $primary-200 !default;
 :root {
   --redditish-bg-color: #{$redditish-background-color};
   --redditish-border-color: #{$redditish-border-color};
-  --redditish-border-highlight-color: #{$redditish-border-highlight-color};
+  // Hover borders across every card, panel, menu, composer, right-sidebar
+  // group and topic-list item read this token. Point at the WBO orange
+  // instead of the inherited $primary-200 / rgba(255,255,255,.22) so every
+  // hover moves toward brand orange -- matches WordPress's --orange-border.
+  --redditish-border-highlight-color: var(--wbo-orange-border);
 
   // WBO brand colours
   --wbo-orange: #ff7900;
