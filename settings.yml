@@ -7,3 +7,7 @@ nav_items:
   textarea: true
   default: '[{"label":"Tournaments","url":"https://worldbeyblade.org/tournaments/"},{"label":"Leagues","url":"https://leaderboard.fighting-spirits.org/"},{"label":"Community","url":"/","active":true,"isCommunity":true},{"label":"Rules & Resources","url":"https://worldbeyblade.org/rules/beyblade-x-rules/"},{"label":"About WBO","url":"#"}]'
   description: "Primary nav menu as a JSON array. Each item: {\"label\":\"…\",\"url\":\"…\"}. Add \"active\":true to underline an item, and \"isCommunity\":true on the one item whose mobile drawer entry expands into the category list. Malformed JSON falls back to the built-in default."
+
+wbo_settings_url:
+  default: "https://worldbeyblade.org/settings/"
+  description: "URL of the WordPress-side Account Settings page. Users who land on Discourse's /u/{username}/preferences/* pages are redirected here. Leave blank to disable the redirect."
