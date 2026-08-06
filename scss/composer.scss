@@ -1,6 +1,10 @@
 #reply-control {
   border-radius: 5px 5px 0 0;
-  border: 1px solid var(--primary-low-mid);
+  // Core sets border-color to a derived --primary-400 (rgb 56,56,56)
+  // at higher specificity than our declared --primary-low-mid, so the
+  // theme rule rendered nearly invisible. Force the WBO hairline value
+  // (matches every other panel border on the site).
+  border: 1px solid var(--redditish-border-color) !important;
   box-shadow: var(--shadow-dropdown);
 
   .composer-fields:empty {
@@ -18,7 +22,10 @@
   .select-kit.combo-box .select-kit-header,
   .select-kit.multi-select .multi-select-header,
   #reply-title {
-    border-color: var(--primary-low-mid);
+    // Same hairline value as the composer chrome; the previous
+    // --primary-low-mid rendered too loud (5:1 vs surface) and
+    // didn't match the rest of the panel border system.
+    border-color: var(--redditish-border-color);
   }
 
   .d-editor-textarea-wrapper {

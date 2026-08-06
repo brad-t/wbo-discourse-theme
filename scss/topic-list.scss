@@ -314,6 +314,10 @@ div.education {
   input {
     width: 100%;
     margin: 0;
+    // Core defaults the input border to rgb(140,140,140) -- much
+    // louder than every other border on the surface. Force the WBO
+    // hairline; keep tertiary as the hover accent.
+    border-color: var(--redditish-border-color);
 
     &:hover {
       border-color: var(--tertiary);

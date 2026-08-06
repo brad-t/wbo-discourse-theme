@@ -213,7 +213,10 @@ body {
 }
 
 .powered-by-discourse {
-  border: 1px solid var(--primary-500);
+  // Least important element on the page -- previously outlined at
+  // --primary-500 (6.5:1 contrast) which made it one of the loudest
+  // borders. Same hairline as every other card.
+  border: 1px solid var(--redditish-border-color);
   grid-area: content;
   align-self: end;
 }
