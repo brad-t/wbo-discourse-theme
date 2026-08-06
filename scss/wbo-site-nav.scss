@@ -410,7 +410,16 @@ $wbo-nav-mobile-breakpoint: 719px;
       text-transform: none;
       transition: color 0.15s, background 0.15s;
 
-      &:hover {
+      // Core's `a:visited { color: var(--d-link-color) }` (0,1,1) outweighs
+      // the base rule (0,1,0), so sublinks fall through to Discourse blue.
+      // Re-assert the drawer colour on :visited at (0,2,0). Same pattern
+      // as .wbo-site-nav__link above.
+      &:visited {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      &:hover,
+      &:visited:hover {
         color: #fff;
         background: rgba(255, 255, 255, 0.05);
       }
