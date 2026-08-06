@@ -145,12 +145,16 @@ body.category,
 
 html:not(.footer-nav-visible) #topic-progress-wrapper {
   // Dock to bottom-LEFT so the progress indicator stays clear of the
-  // .wbo-bottom-bar reply circle at bottom-right. Core positions it
-  // right-aligned by default; force left with !important because a
-  // core rule sets `right: 0` at higher specificity in some modes.
+  // .wbo-bottom-bar reply circle at bottom-right. Core rendered the
+  // wrapper as position:static in the layout, so the previous
+  // left/right/bottom values were ignored (positioning offsets only
+  // apply to positioned elements). Force position:fixed so the
+  // wrapper actually docks.
+  position: fixed !important;
   bottom: calc(env(safe-area-inset-bottom) + 1em);
   left: 0.75em !important;
   right: auto !important;
+  z-index: 400;
 }
 
 #topic-progress {
