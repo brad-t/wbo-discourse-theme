@@ -359,8 +359,23 @@ h4 { font-size: 18px; }
 }
 
 // ── WBO Focus Ring (blue) ─────────────────────────────────────────────────────
+//
+// Was only setting outline-color; width/style/offset fell through to UA
+// defaults. Match WordPress's full rule (style.css:247) so keyboard focus
+// looks the same on both halves of the site. Skip WP's `border-radius: 2px`
+// -- it would override every element's shape on focus (pill buttons become
+// squares), which is fine in WP but not with Discourse's control system.
 
 :focus-visible {
-  outline-color: var(--wbo-blue);
+  outline: 2px solid var(--wbo-blue);
+  outline-offset: 3px;
+}
+
+// User-menu items: suppress the ring, use a hover wash instead
+// (matches WP style.css:3518). Otherwise the ring outside the menu row
+// looks like a bug on a densely packed dropdown.
+.user-menu-item:focus-visible {
+  outline: none;
+  background: rgba(255, 255, 255, 0.06);
 }
 
