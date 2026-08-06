@@ -181,6 +181,7 @@ div.education {
   overflow: hidden;
 
   @include custom-card;
+  @include custom-card-hover;
 
   h2 {
     margin: 0 !important;
@@ -304,6 +305,7 @@ div.education {
   align-items: center;
 
   @include custom-card;
+  @include custom-card-hover;
 
   .avatar {
     margin: 0 1em 0 0;

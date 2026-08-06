@@ -2,6 +2,7 @@
   height: 100%;
 
   @include custom-card;
+  @include custom-card-hover;
 }
 
 .badge-card .favorite-btn {

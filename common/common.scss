@@ -32,11 +32,15 @@ body {
   background: var(--secondary);
 
   @content;
+}
 
-  .discourse-no-touch & {
-    &:hover {
-      border: 1px solid var(--redditish-border-highlight-color);
-    }
+// Opt-in orange hover for cards that are actually clickable (topic-list
+// row, category / group / badge box, fake reply input). Passive cards
+// like #topic-title, .posts-wrapper, .body-page, .user-main don't
+// include this -- hovering them shouldn't hint at interactivity.
+@mixin custom-card-hover {
+  .discourse-no-touch &:hover {
+    border-color: var(--redditish-border-highlight-color);
   }
 }
 
@@ -190,11 +194,9 @@ body {
 }
 
 .sidebar-wrapper .sidebar-container {
+  // The whole sidebar isn't a click target; the previous hover made the
+  // right rule glow orange whenever the cursor was anywhere in the sidebar.
   border-right: 1px solid var(--redditish-border-color);
-
-  &:hover {
-    border-color: var(--redditish-border-highlight-color);
-  }
 }
 
 .sidebar-section-wrapper

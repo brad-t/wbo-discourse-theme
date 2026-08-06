@@ -5,6 +5,7 @@
 
 .group-box-inner {
   @include custom-card;
+  @include custom-card-hover;
 }
 
 .container.group {
