@@ -322,8 +322,13 @@ export default class WboSiteNav extends Component {
                 {{on "click" this.closeDrawer}}
               >
                 <span class="wbo-nav-drawer__sublink-label">Latest</span>
+                {{! Reuses Discourse's own sidebar dot indicator (same
+                    class + icon as the category rows). Existing SCSS
+                    override colours it WBO orange. }}
                 {{#if this.latestBadge}}
-                  <span class="wbo-nav-drawer__badge">{{this.latestBadge}}</span>
+                  <span class="sidebar-section-link-suffix icon unread">
+                    {{icon "circle"}}
+                  </span>
                 {{/if}}
               </a>
 
@@ -335,9 +340,9 @@ export default class WboSiteNav extends Component {
                 >
                   <span class="wbo-nav-drawer__sublink-label">Unread</span>
                   {{#if this.totalUnread}}
-                    <span
-                      class="wbo-nav-drawer__badge"
-                    >{{this.totalUnread}}</span>
+                    <span class="sidebar-section-link-suffix icon unread">
+                      {{icon "circle"}}
+                    </span>
                   {{/if}}
                 </a>
               {{/if}}
