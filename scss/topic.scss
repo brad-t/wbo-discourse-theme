@@ -318,11 +318,11 @@
   }
 }
 
-.topic-map.--bottom {
-  margin-top: 1em;
-  max-width: unset;
-
-  @include custom-card;
+// Hide the topic map entirely (both the --op summary under the first post
+// and the --bottom variant). None of its stats -- views, likes, users,
+// links -- are useful for this community.
+.topic-map {
+  display: none;
 }
 
 .map:first-of-type .buttons .btn {
