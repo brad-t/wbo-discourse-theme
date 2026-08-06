@@ -1,5 +1,8 @@
 .user-main {
-  @include custom-card;
+  @include custom-card {
+    // Profile is a content-heavy page; roomier padding per WP.
+    padding: 20px;
+  }
 }
 
 // Hide user-profile nav items WBO's setup doesn't surface:

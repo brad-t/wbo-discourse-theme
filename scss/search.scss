@@ -1,5 +1,8 @@
 .search-container {
-  @include custom-card;
+  @include custom-card {
+    // Search page reads better with more breathing room.
+    padding: 20px;
+  }
 
   .search-advanced .search-info,
   .search-advanced .search-results,

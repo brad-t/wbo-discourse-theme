@@ -19,9 +19,14 @@ body {
   --header-offset: 56px !important;
 }
 
+// WordPress uses 16px on canonical .card, 20-24px on roomier panels. The
+// old 0.75em (12px at 16px base) was tighter than everything WP renders,
+// and font-size-relative -- so a card containing --font-down-1 text was
+// even smaller. Fixed 16px matches WP's --card-padding; individual roomier
+// panels bump to 20px explicitly.
 @mixin custom-card {
   box-sizing: border-box;
-  padding: 0.75em;
+  padding: 16px;
   border-radius: var(--wbo-card-radius);
   border: 1px solid var(--redditish-border-color);
   background: var(--secondary);
@@ -201,7 +206,10 @@ body {
 }
 
 .body-page {
-  @include custom-card;
+  @include custom-card {
+    // Roomier panel per WP -- matches .card at 20px on user-facing pages.
+    padding: 20px;
+  }
 }
 
 .powered-by-discourse {
