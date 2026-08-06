@@ -164,7 +164,7 @@ $wbo-nav-mobile-breakpoint: 719px;
     // 0.9rem (14.4px) was 18% smaller and read as "a different site".
     font-size: 1.1rem;
     font-weight: 500;
-    letter-spacing: 0;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
