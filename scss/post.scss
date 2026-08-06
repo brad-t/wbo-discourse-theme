@@ -28,10 +28,11 @@
     margin-left: auto;
   }
 
-  // Body copy -- slightly tighter and softer than the default 16px/1.5.
+  // Body copy. Handoff proposed 14px/1.6 matching WP's .t-discourse-post,
+  // but that's WP's *embedded* compact treatment (posts inline on tournament
+  // pages). On the forum itself the post IS the primary reading experience,
+  // so keep Discourse's default 16px/1.5 (matches WP body copy too).
   .cooked {
-    font-size: 14px;
-    line-height: 1.6;
     color: var(--primary);
   }
 

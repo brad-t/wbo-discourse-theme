@@ -2,6 +2,12 @@
   background: var(--secondary);
   margin: 0;
   border-radius: var(--wbo-card-radius) var(--wbo-card-radius) 0 0;
+  // #topic-title and .posts-wrapper together form one card. Give the top
+  // three sides the same hairline the wrapper uses on the bottom three
+  // (custom-card mixin, with border-top: none reset in .posts-wrapper
+  // below) so the outline closes around the whole thing.
+  border: 1px solid var(--redditish-border-color);
+  border-bottom: none;
   box-sizing: border-box;
   padding: 1.25em 2em;
 
@@ -54,6 +60,19 @@
   .topic-avatar,
   .topic-body {
     border-top: none;
+  }
+}
+
+// The "N days later" separator between posts is a .small-action whose
+// desc + avatar carry a border-top for the HR line. Core sets that colour
+// to --content-border-color (rgb 56,56,56 on this scheme -- same wrong
+// grey the composer had before P1-3). Retarget to the WBO hairline and
+// add a little breathing room above/below so it doesn't crowd the
+// neighbouring posts.
+.small-action.time-gap {
+  .small-action-desc,
+  .topic-avatar {
+    border-top-color: var(--redditish-border-color);
   }
 }
 
