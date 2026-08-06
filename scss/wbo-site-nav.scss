@@ -423,6 +423,20 @@ $wbo-nav-mobile-breakpoint: 719px;
         color: #fff;
         background: rgba(255, 255, 255, 0.05);
       }
+
+      // Mirror the two rules Discourse applies to the same dot inside
+      // .sidebar-section-link (font-size sizes the SVG, .unread svg color
+      // matches the native sidebar suffix colour) so the reused
+      // .sidebar-section-link-suffix.icon.unread here renders identically
+      // to the one on category rows.
+      .sidebar-section-link-suffix {
+        font-size: var(--font-down-4);
+        flex-shrink: 0;
+
+        &.icon.unread svg {
+          color: var(--d-sidebar-suffix-color);
+        }
+      }
     }
 
     &__sublink-label {
@@ -500,11 +514,6 @@ $wbo-nav-mobile-breakpoint: 719px;
       .sidebar-section-link-prefix {
         margin-right: 0.4em;
         flex-shrink: 0;
-      }
-
-      // Unread indicator dot (when the user hasn't opted into count display)
-      .sidebar-section-link-suffix.icon.unread {
-        color: var(--wbo-orange);
       }
 
       // Hide "All categories" — the browseable top-levels are already
