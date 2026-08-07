@@ -429,9 +429,9 @@ $wbo-nav-mobile-breakpoint: 719px;
     &__sublink {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 0.5em;
       height: 40px;
-      padding: 0 1.5em;
+      padding: 0 1.5em 0 1.8em;
       color: rgba(255, 255, 255, 0.72);
       text-decoration: none;
       font-family: "Rubik", sans-serif;
@@ -470,8 +470,10 @@ $wbo-nav-mobile-breakpoint: 719px;
       }
     }
 
+    // No flex:1 — let the label take its natural width so the dot sits
+    // right next to it (matching category rows), not right-aligned.
     &__sublink-label {
-      flex: 1;
+      flex: 0 0 auto;
     }
 
     // Restyle the embedded Discourse CategoriesSection for our dark drawer.
