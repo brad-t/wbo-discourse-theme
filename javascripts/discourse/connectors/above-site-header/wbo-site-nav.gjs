@@ -304,6 +304,17 @@ export default class WboSiteNav extends Component {
       class="wbo-nav-drawer {{if this.isDrawerOpen 'is-open'}}"
       aria-hidden={{if this.isDrawerOpen "false" "true"}}
     >
+      {{! Logo pinned in the drawer's top strip. The WBO nav-bar logo
+          sits behind the drawer (z-index 1002 vs 1009) so it's hidden
+          when the drawer is open; this fills that empty top strip. }}
+      <a href="https://worldbeyblade.org" class="wbo-nav-drawer__logo">
+        {{#if this.logoUrl}}
+          <img src={{this.logoUrl}} alt="WBO" height="36" />
+        {{else}}
+          <span class="wbo-nav-drawer__logo-text">WBO</span>
+        {{/if}}
+      </a>
+
       <nav>
         {{#each this.navItems as |item|}}
           <a

@@ -345,6 +345,37 @@ $wbo-nav-mobile-breakpoint: 719px;
       transform: translateX(0);
     }
 
+    // Logo pinned in the top strip that padding-top reserves. The X
+    // (open-state hamburger) sits in the top-left at 1010; centering
+    // the logo across the drawer's full width lands it just right of
+    // the X, matching where the WBO nav-bar centers it when closed.
+    &__logo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: $wbo-nav-height;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      pointer-events: auto;
+
+      img {
+        display: block;
+        height: 36px;
+        width: auto;
+      }
+    }
+
+    &__logo-text {
+      font-family: "Oswald", sans-serif;
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+
     nav {
       display: flex;
       flex-direction: column;
