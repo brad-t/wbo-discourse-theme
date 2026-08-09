@@ -17,15 +17,18 @@
 }
 
 // ── Google button ────────────────────────────────────────────────────────
-// Bring it into the site's button language: the base .btn rule in
-// common.scss turns --btn-accent into a 2px border + translucent fill that
-// fills to 60% on hover. Give the social button the WBO BLUE accent so it
-// reads as the secondary path (the primary "Log In" CTA owns orange), and
-// re-assert a light label because core hardcodes it black. Not scoped to the
-// login page: the same button appears in the signup modal and is just as
-// invisible there.
+// Two things fight us here:
+//   1. Core colours the label + icon black (invisible on navy).
+//   2. Core sets the border with an ID-specificity rule
+//      (`.login-fullpage #login-buttons .btn-social`, = 1,2,0) that outranks
+//      the theme's --btn-accent border, so the accent never lands.
+//
+// Fix the label globally (it's just as invisible in the signup modal), then
+// re-assert the WBO-BLUE accent from inside core's own ID context so it wins.
+// Blue, not orange, so it reads as the secondary path — the primary "Log In"
+// CTA owns orange. The fill reuses the theme's --btn-fill variable so hover
+// deepens 20% -> 60% exactly like every other button.
 .btn-social.google_oauth2 {
-  --btn-accent: var(--wbo-blue);
   color: var(--primary);
   // Match the accented-variant label treatment (see common.scss) so the text
   // stays readable once the fill deepens on hover.
@@ -37,6 +40,24 @@
 
   .discourse-no-touch &:hover {
     color: var(--primary);
+  }
+}
+
+// Match core's context list so the accent applies wherever the alt-auth
+// column renders (login / signup / invite / password-reset), beating core's
+// grey border on specificity (1,3,0 > 1,2,0).
+.login-fullpage,
+.signup-fullpage,
+.invites-show,
+.password-reset-page {
+  #login-buttons .btn-social.google_oauth2 {
+    border: 2px solid var(--wbo-blue);
+    background: color-mix(in srgb, var(--wbo-blue) var(--btn-fill, 20%), transparent);
+  }
+
+  .discourse-no-touch #login-buttons .btn-social.google_oauth2:hover {
+    --btn-fill: 60%;
+    border-color: var(--wbo-blue);
   }
 }
 
