@@ -1,0 +1,59 @@
+// ── Full-page login (/login) ─────────────────────────────────────────────
+//
+// The alt-auth column (#login-buttons) is where Discourse renders one-click
+// social sign-in. WBO offers exactly one provider — Google (google_oauth2).
+//
+// Core styles .btn-social for a LIGHT surface: black label + a dark hairline
+// border. On the navy (#051129) login page that renders invisible — the same
+// bug the passkey button had. Both the Google button (here) and the passkey
+// button need explicit dark-theme handling.
+
+// ── Passkey ──────────────────────────────────────────────────────────────
+// WBO has never offered passkey/WebAuthn sign-in. Hide it wherever the
+// alt-auth column renders (full-page login + the create-account modal) so
+// the column shows only the provider we actually support.
+.passkey-login-button {
+  display: none;
+}
+
+// ── Google button ────────────────────────────────────────────────────────
+// Bring it into the site's button language: the base .btn rule in
+// common.scss turns --btn-accent into a 2px border + translucent fill that
+// fills to 60% on hover. Give the social button the WBO BLUE accent so it
+// reads as the secondary path (the primary "Log In" CTA owns orange), and
+// re-assert a light label because core hardcodes it black. Not scoped to the
+// login page: the same button appears in the signup modal and is just as
+// invisible there.
+.btn-social.google_oauth2 {
+  --btn-accent: var(--wbo-blue);
+  color: var(--primary);
+  // Match the accented-variant label treatment (see common.scss) so the text
+  // stays readable once the fill deepens on hover.
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+
+  .btn-social-title {
+    color: var(--primary);
+  }
+
+  .discourse-no-touch &:hover {
+    color: var(--primary);
+  }
+}
+
+// ── "Or" separator ───────────────────────────────────────────────────────
+// There is no separator element in the login DOM — core only draws the
+// vertical rule between the two columns. Add a short connector above the
+// alt-auth column so the divide reads as "password form, OR one click".
+// Login-page only (the signup modal shouldn't get this heading). Oswald 500
+// all-caps matches the theme's UI-label convention.
+.login-fullpage #login-buttons::before {
+  content: "Or";
+  display: block;
+  margin-bottom: 12px;
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary-medium);
+  text-align: center;
+}
