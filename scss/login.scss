@@ -61,20 +61,36 @@
   }
 }
 
-// ── "Or" separator ───────────────────────────────────────────────────────
-// There is no separator element in the login DOM — core only draws the
-// vertical rule between the two columns. Add a short connector above the
-// alt-auth column so the divide reads as "password form, OR one click".
-// Login-page only (the signup modal shouldn't get this heading). Oswald 500
-// all-caps matches the theme's UI-label convention.
-.login-fullpage #login-buttons::before {
-  content: "Or";
-  display: block;
-  margin-bottom: 12px;
-  font-family: "Oswald", sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--primary-medium);
-  text-align: center;
+// ── Mobile: order + "Or" separator ───────────────────────────────────────
+// Unlike the signup page (DOM order: form -> separator -> alt-auth), the
+// login page's alt-auth column (#login-buttons) sits BEFORE the form in the
+// DOM — core relies on a two-column desktop layout to float it to the right.
+// Below 48rem that layout collapses in DOM order, dropping the Google button
+// ABOVE the form (the opposite of signup). Two fixes, mobile only so the
+// desktop two-column is untouched:
+//   1. order: push the alt-auth below the form + CTA.
+//   2. undo core's row/wrap on #login-buttons so the separator stacks above
+//      a full-width button (otherwise "Or" sits beside it).
+// Result matches signup: form -> Log In -> Or -> Sign in with Google.
+//
+// The vertical rule between the desktop columns already signals the split up
+// there, so the "Or" is mobile-only — no separator element exists in the
+// login DOM to reuse, so it's a centered ::before.
+@media (max-width: 47.999rem) {
+  .login-fullpage #login-buttons {
+    order: 1; // header / form / CTA stay at order:0, so this lands last
+    flex-direction: column;
+    margin-top: 1.5em;
+
+    &::before {
+      content: "Or";
+      align-self: center;
+      margin-bottom: 12px;
+      font-family: "Oswald", sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary-medium);
+    }
+  }
 }
