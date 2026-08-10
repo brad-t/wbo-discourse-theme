@@ -78,13 +78,11 @@
 // login DOM to reuse, so it's a centered ::before.
 @media (max-width: 47.999rem) {
   // Core adds `padding: 1rem` to the mobile header on both auth pages, then
-  // tightens the vertical padding on signup ONLY (a `.signup-body` override
-  // -> padding-top:0, padding-bottom:0.25rem). The login page never got that
-  // override, so its mobile header carries a full 1rem underneath while
-  // desktop has none. Mirror signup: keep the 1rem side gutter, drop the
-  // top/bottom so the two pages match and the header stops looking bottom-heavy.
+  // tightens the vertical padding on signup ONLY, leaving the login header
+  // with a full 1rem underneath while desktop has none. Trim just the bottom
+  // (not the top — unlike signup, the login page has nothing above the header,
+  // so it still needs the 1rem of top breathing room below the nav).
   .login-fullpage .login-welcome-header {
-    padding-top: 0;
     padding-bottom: 0.25rem;
   }
 
