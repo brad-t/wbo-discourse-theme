@@ -94,18 +94,47 @@ export default class WboSiteNav extends Component {
   get navItems() {
     // `settings` is the theme-settings global injected into theme JS.
     const raw = settings.nav_items;
+    let items = DEFAULT_NAV_ITEMS;
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) {
-          return parsed;
+          items = parsed;
         }
       } catch {
         // Malformed JSON in the setting -- fall through to the default
         // so the nav never renders empty.
       }
     }
-    return DEFAULT_NAV_ITEMS;
+
+    // Community is baked as active in the setting, but auth/account flows
+    // ({login, signup, password-reset, email-login, invites, ...}) live in
+    // Discourse without being part of the Community section — active state
+    // should follow the intent (browsing the forum), not the fact that
+    // the URL is on the Discourse origin.
+    const communityActive = this._isCommunityActiveRoute();
+    return items.map((item) =>
+      item.isCommunity ? { ...item, active: communityActive } : item
+    );
+  }
+
+  _isCommunityActiveRoute() {
+    const route = this.router.currentRouteName || "";
+    // Prefix match — Ember route names dot-delimit sub-routes (e.g.
+    // `password-reset.token`, `invites.show`), so `startsWith` catches
+    // the whole subtree with one entry.
+    const NON_COMMUNITY_ROUTE_PREFIXES = [
+      "login",
+      "signup",
+      "password-reset",
+      "email-login",
+      "invites",
+      "account-created",
+      "associate-account",
+    ];
+    return !NON_COMMUNITY_ROUTE_PREFIXES.some(
+      (prefix) => route === prefix || route.startsWith(prefix + ".")
+    );
   }
 
   get logoUrl() {
