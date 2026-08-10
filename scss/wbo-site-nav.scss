@@ -221,30 +221,32 @@ $wbo-nav-mobile-breakpoint: 719px;
     }
   }
 
+  // Matches the WordPress "Log in" pill (.btn.btn-primary.user-menu-login):
+  // 20% translucent orange fill, 2px solid orange border, Rubik 600 14px,
+  // 6px 16px pill, mixed case. Kept in sync with .btn in the WP theme's
+  // style.css so the two halves of the site share the same CTA look.
   &__login {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    height: 34px;
-    padding: 0 1em;
-    background: var(--wbo-orange);
+    padding: 6px 16px;
+    background: color-mix(in srgb, var(--wbo-orange) 20%, transparent);
     color: #fff;
-    font-family: "Oswald", sans-serif;
-    font-size: 0.85rem;
-    // All-caps Oswald -> 500 (matches the nav links).
-    font-weight: 500;
-    letter-spacing: 0;
-    text-transform: uppercase;
-    text-decoration: none;
+    border: 2px solid var(--wbo-orange);
     border-radius: 100px;
-    transition: background 0.15s;
+    font-family: "Rubik", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: opacity 0.15s;
 
     &:visited {
       color: #fff;
     }
 
     &:hover {
-      background: darken(#ff7900, 8%);
       color: #fff;
+      opacity: 0.85;
     }
   }
 
