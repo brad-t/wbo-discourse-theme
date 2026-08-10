@@ -53,6 +53,9 @@
   #login-buttons .btn-social.google_oauth2 {
     border: 2px solid var(--wbo-blue);
     background: color-mix(in srgb, var(--wbo-blue) var(--btn-fill, 20%), transparent);
+    // Core gives .btn-social the small --d-border-radius; every other WBO
+    // button is the --d-button-border-radius pill. Match it.
+    border-radius: var(--d-button-border-radius);
   }
 
   .discourse-no-touch #login-buttons .btn-social.google_oauth2:hover {
