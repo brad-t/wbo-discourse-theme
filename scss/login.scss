@@ -80,17 +80,83 @@
   .login-fullpage #login-buttons {
     order: 1; // header / form / CTA stay at order:0, so this lands last
     flex-direction: column;
-    margin-top: 1.5em;
+    position: relative;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    // Match the signup page's separator exactly. Core renders a
+    // `.login-or-separator` element there (a hairline rule with the word
+    // centred on it) but NOT on the login page, so rebuild the same look:
+    // border-top for the line, a ::before chip masking it. --secondary is the
+    // page background, so the chip hides the line behind the word.
+    border-top: 1px solid var(--content-border-color);
 
     &::before {
       content: "Or";
-      align-self: center;
-      margin-bottom: 12px;
-      font-family: "Oswald", sans-serif;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding-inline: 0.5rem;
+      background: var(--secondary);
       color: var(--primary-medium);
+      font-size: var(--font-down-1-rem);
+      text-transform: uppercase;
     }
+  }
+}
+
+// ── Float-label vertical centring ────────────────────────────────────────
+// The email / username / password fields use Discourse's floating label
+// (.alt-placeholder). Core rests it at top:13px inside the 36px desktop
+// input — ~5px below the field's optical centre, so it reads as sitting too
+// low. Nudge the resting position to centre it. Only the desktop resting
+// state is touched: the floated state (input:focus / .value-entered) and the
+// mobile resting (top:11px, already centred in the 40px mobile field via the
+// higher-specificity .login-form rule) both out-rank this selector.
+.login-fullpage,
+.signup-fullpage,
+.invites-show,
+.password-reset-page {
+  .input-group label.alt-placeholder {
+    top: 8px;
+  }
+}
+
+// ── CTA emphasis: Sign Up primary, Log In secondary ──────────────────────
+// The signup page already leads with the orange "Sign Up" CTA and demotes
+// "Log In" to a quiet link. The login page did the reverse (loud orange
+// "Log In", plain "Sign Up"). Flip the login page so the create-account path
+// carries the primary orange weight on BOTH pages. Login-page only — signup
+// is already correct.
+//
+// Buttons are the theme's --btn-accent mechanism (see common.scss): set the
+// accent and the 2px border + translucent fill follow. Padding is pinned to
+// the site-wide 10/20 so these match every other WBO button — core sized the
+// CTA buttons tighter (0/8), part of why the page felt off-rhythm.
+.login-fullpage .login-page-cta {
+  #new-account-link {
+    // Sign Up -> primary (orange). It's a .btn-flat, so it also needs the
+    // accented-variant label treatment the theme only auto-applies to
+    // .btn-primary/danger/success.
+    --btn-accent: var(--wbo-orange);
+    color: var(--primary);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+
+    .discourse-no-touch &:hover {
+      color: var(--primary);
+    }
+  }
+
+  #login-button {
+    // Log In -> secondary: a neutral outline that steps back from the orange
+    // without vanishing (it's still a valid action, just no longer the lead).
+    --btn-accent: var(--primary-medium);
+  }
+
+  #new-account-link,
+  #login-button {
+    padding-block: 10px;
+    padding-inline: 20px;
+    height: auto;
   }
 }
