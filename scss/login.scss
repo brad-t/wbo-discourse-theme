@@ -77,6 +77,17 @@
 // there, so the "Or" is mobile-only — no separator element exists in the
 // login DOM to reuse, so it's a centered ::before.
 @media (max-width: 47.999rem) {
+  // Core adds `padding: 1rem` to the mobile header on both auth pages, then
+  // tightens the vertical padding on signup ONLY (a `.signup-body` override
+  // -> padding-top:0, padding-bottom:0.25rem). The login page never got that
+  // override, so its mobile header carries a full 1rem underneath while
+  // desktop has none. Mirror signup: keep the 1rem side gutter, drop the
+  // top/bottom so the two pages match and the header stops looking bottom-heavy.
+  .login-fullpage .login-welcome-header {
+    padding-top: 0;
+    padding-bottom: 0.25rem;
+  }
+
   .login-fullpage #login-buttons {
     order: 1; // header / form / CTA stay at order:0, so this lands last
     flex-direction: column;
