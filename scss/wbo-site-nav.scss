@@ -221,17 +221,20 @@ $wbo-nav-mobile-breakpoint: 719px;
     }
   }
 
-  // Matches the WordPress "Log in" pill (.btn.btn-primary.user-menu-login):
-  // 20% translucent orange fill, 2px solid orange border, Rubik 600 14px,
-  // 6px 16px pill, mixed case. Kept in sync with .btn in the WP theme's
-  // style.css so the two halves of the site share the same CTA look.
+  // Two-button auth pair on desktop, mirroring the WP header:
+  //   __join  = .btn.btn-primary   (orange accent, primary CTA)
+  //   __login = .btn.btn-secondary (blue accent)
+  // Both share the pill shape from WP's .btn: 20% translucent fill, 2px
+  // accent border, Rubik 600 14px, 6px 16px, mixed case. Kept in sync
+  // with .btn in the WP theme's style.css.
+  &__join,
   &__login {
     display: inline-flex;
     align-items: center;
     padding: 6px 16px;
-    background: color-mix(in srgb, var(--wbo-orange) 20%, transparent);
     color: #fff;
-    border: 2px solid var(--wbo-orange);
+    border-width: 2px;
+    border-style: solid;
     border-radius: 100px;
     font-family: "Rubik", sans-serif;
     font-size: 14px;
@@ -240,13 +243,31 @@ $wbo-nav-mobile-breakpoint: 719px;
     text-decoration: none;
     transition: opacity 0.15s;
 
-    &:visited {
+    &:visited,
+    &:hover {
       color: #fff;
     }
 
     &:hover {
-      color: #fff;
       opacity: 0.85;
+    }
+  }
+
+  &__join {
+    background: color-mix(in srgb, var(--wbo-orange) 20%, transparent);
+    border-color: var(--wbo-orange);
+  }
+
+  &__login {
+    background: color-mix(in srgb, var(--wbo-blue) 20%, transparent);
+    border-color: var(--wbo-blue);
+  }
+
+  // Mobile carries the auth pair in the drawer footer, not the header.
+  @media screen and (width <= $wbo-nav-mobile-breakpoint) {
+    &__join,
+    &__login {
+      display: none;
     }
   }
 
@@ -609,6 +630,53 @@ $wbo-nav-mobile-breakpoint: 719px;
 
       &:hover {
         color: rgba(255, 255, 255, 0.85);
+      }
+    }
+
+    // Anonymous drawer footer — Join Now + Log in in one flex row that
+    // shares the drawer width. Sits directly after the last nav item
+    // (no margin-top:auto), matching the WP drawer's .nav-drawer-auth.
+    &__auth {
+      display: flex;
+      gap: 8px;
+      padding: 12px 1.5em;
+    }
+
+    &__auth-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      color: #fff;
+      border-width: 2px;
+      border-style: solid;
+      border-radius: 100px;
+      font-family: "Rubik", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-decoration: none;
+      transition: opacity 0.15s;
+
+      &:visited,
+      &:hover {
+        color: #fff;
+      }
+
+      &:hover {
+        opacity: 0.85;
+      }
+
+      &--primary {
+        background: color-mix(in srgb, var(--wbo-orange) 20%, transparent);
+        border-color: var(--wbo-orange);
+      }
+
+      &--secondary {
+        background: color-mix(in srgb, var(--wbo-blue) 20%, transparent);
+        border-color: var(--wbo-blue);
       }
     }
   }

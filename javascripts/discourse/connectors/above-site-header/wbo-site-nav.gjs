@@ -311,6 +311,9 @@ export default class WboSiteNav extends Component {
               />
             </button>
           {{else}}
+            {{! Two-button pair on desktop, matching the WP header. Both
+                are hidden on mobile via SCSS; the drawer carries them. }}
+            <a href="/signup" class="wbo-site-nav__join">Join Now</a>
             <a href="/login" class="wbo-site-nav__login">Log in</a>
           {{/if}}
         </div>
@@ -417,6 +420,22 @@ export default class WboSiteNav extends Component {
           class="wbo-nav-drawer__logout"
           {{on "click" this.closeDrawer}}
         >Log out</a>
+      {{else}}
+        {{! Anonymous drawer footer — Join Now + Log in side by side,
+            mirroring the WP drawer's two-button auth row. Sits directly
+            after the nav items (no margin-top:auto). }}
+        <div class="wbo-nav-drawer__auth">
+          <a
+            href="/signup"
+            class="wbo-nav-drawer__auth-btn wbo-nav-drawer__auth-btn--primary"
+            {{on "click" this.closeDrawer}}
+          >Join Now</a>
+          <a
+            href="/login"
+            class="wbo-nav-drawer__auth-btn wbo-nav-drawer__auth-btn--secondary"
+            {{on "click" this.closeDrawer}}
+          >Log in</a>
+        </div>
       {{/if}}
     </div>
 
