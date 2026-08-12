@@ -4,9 +4,53 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { on } from "@ember/modifier";
 import { concat } from "@ember/helper";
+import { htmlSafe } from "@ember/template";
 import icon from "discourse/helpers/d-icon";
 import { getOwner } from "@ember/application";
 import Composer from "discourse/models/composer";
+
+// Inline SVG paths lifted from the WP header.php dropdown so both sides
+// use identical iconography. Stroke inherits currentColor, so drawer/
+// dropdown CSS can recolor as needed. Kept as SafeString values so
+// Glimmer renders them as HTML instead of escaping.
+const _svg = (paths) =>
+  htmlSafe(
+    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" ` +
+      `stroke="currentColor" stroke-width="2" stroke-linecap="round" ` +
+      `stroke-linejoin="round">${paths}</svg>`
+  );
+const ICONS = {
+  trophy: _svg(
+    '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>' +
+      '<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>' +
+      '<path d="M4 22h16"/>' +
+      '<path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>' +
+      '<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>' +
+      '<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>'
+  ),
+  bell: _svg(
+    '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>' +
+      '<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+  ),
+  envelope: _svg(
+    '<rect x="2" y="4" width="20" height="16" rx="2"/>' +
+      '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'
+  ),
+  gear: _svg(
+    '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/>' +
+      '<circle cx="12" cy="12" r="3"/>'
+  ),
+  sun: _svg(
+    '<circle cx="12" cy="12" r="4"/>' +
+      '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
+  ),
+  moon: _svg('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
+  logout: _svg(
+    '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>' +
+      '<polyline points="16 17 21 12 16 7"/>' +
+      '<line x1="21" y1="12" x2="9" y2="12"/>'
+  ),
+};
 // Reuse Discourse's own categories section so we get:
 //   - unread/new counts wired to TopicTrackingState (live)
 //   - the user's own sidebar category picks (or top-N fallback)
@@ -338,7 +382,8 @@ export default class WboSiteNav extends Component {
   }
 
   // Dropdown items, mirroring the WP header's user-menu-dropdown. Order,
-  // labels, and the WP/Discourse-side split match WP one-for-one.
+  // labels, icons, and the WP/Discourse-side split match WP one-for-one.
+  // "Preferences (forum)" was removed from both sides.
   get userDropdownItems() {
     const u = this.currentUser;
     if (!u) return [];
@@ -348,12 +393,14 @@ export default class WboSiteNav extends Component {
         key: "tournaments",
         label: "My Tournaments",
         href: `${this.wpBase}/tournaments/?going=1`,
+        icon: ICONS.trophy,
         // Tournament count is a WP-side value; skipping for now per plan.
       },
       {
         key: "notifications",
         label: "Notifications",
         href: `/u/${username}/notifications`,
+        icon: ICONS.bell,
         count: this.unreadNotifications,
         countVariant: "activity",
       },
@@ -361,6 +408,7 @@ export default class WboSiteNav extends Component {
         key: "messages",
         label: "Messages",
         href: `/u/${username}/messages`,
+        icon: ICONS.envelope,
         count: this.unreadMessages,
         countVariant: "activity",
       },
@@ -368,13 +416,20 @@ export default class WboSiteNav extends Component {
         key: "settings",
         label: "Settings",
         href: `${this.wpBase}/settings/`,
-      },
-      {
-        key: "prefs",
-        label: "Preferences (forum)",
-        href: `/u/${username}/preferences`,
+        icon: ICONS.gear,
       },
     ];
+  }
+
+  // Expose the theme-toggle + log-out icons to the template.
+  get iconSun() {
+    return ICONS.sun;
+  }
+  get iconMoon() {
+    return ICONS.moon;
+  }
+  get iconLogout() {
+    return ICONS.logout;
   }
 
   @action
@@ -500,6 +555,7 @@ export default class WboSiteNav extends Component {
                       role="menuitem"
                       href={{item.href}}
                     >
+                      <span class="wbo-user-menu-item-icon">{{item.icon}}</span>
                       <span class="wbo-user-menu-item-label">{{item.label}}</span>
                       {{#if item.count}}
                         <span
@@ -512,13 +568,19 @@ export default class WboSiteNav extends Component {
 
                   <div class="wbo-user-menu-divider" role="separator"></div>
 
-                  {{! Theme toggle — WP-parity stub; see toggleTheme. }}
+                  {{! Theme toggle — WP-parity stub; see toggleTheme. Two
+                      icons ship (sun/moon); CSS shows the one that names
+                      the action a click takes. }}
                   <button
                     {{on "click" this.toggleTheme}}
                     type="button"
                     class="wbo-user-menu-item wbo-user-menu-theme"
                     role="menuitem"
                   >
+                    <span class="wbo-user-menu-item-icon">
+                      <span class="when-dark">{{this.iconSun}}</span>
+                      <span class="when-light">{{this.iconMoon}}</span>
+                    </span>
                     <span class="wbo-user-menu-item-label when-dark"
                     >Light mode</span>
                     <span class="wbo-user-menu-item-label when-light"
@@ -530,6 +592,7 @@ export default class WboSiteNav extends Component {
                     role="menuitem"
                     href="/logout"
                   >
+                    <span class="wbo-user-menu-item-icon">{{this.iconLogout}}</span>
                     <span class="wbo-user-menu-item-label">Log out</span>
                   </a>
                 </div>

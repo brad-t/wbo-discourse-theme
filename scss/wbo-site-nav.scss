@@ -925,6 +925,8 @@ $wbo-nav-mobile-breakpoint: 719px;
   border: 0;
   border-radius: 6px;
   cursor: pointer;
+  // Normalize <button>'s default center alignment so the theme-toggle
+  // label reads the same as the <a> rows.
   text-align: left;
   transition: background 0.15s, color 0.15s;
 
@@ -937,6 +939,21 @@ $wbo-nav-mobile-breakpoint: 719px;
 
   &:visited {
     color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+// Icon column — 20px wide, orange, matching WP's .user-menu-item-icon.
+// The inline SVGs inherit currentColor so this one rule paints them all.
+.wbo-user-menu-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  color: var(--wbo-orange);
+  flex-shrink: 0;
+
+  svg {
+    display: block;
   }
 }
 
@@ -981,6 +998,11 @@ $wbo-nav-mobile-breakpoint: 719px;
 .wbo-user-menu-item-secondary {
   color: rgba(255, 255, 255, 0.6);
   font-size: 13px;
+
+  // Muted icon on the log-out row, matching WP's .user-menu-item-secondary.
+  .wbo-user-menu-item-icon {
+    color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 // Theme toggle: both labels ship, CSS shows the one that names the
