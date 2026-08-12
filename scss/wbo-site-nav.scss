@@ -263,9 +263,10 @@ $wbo-nav-mobile-breakpoint: 719px;
     border-color: var(--wbo-blue);
   }
 
-  // Mobile carries the auth pair in the drawer footer, not the header.
+  // Mobile keeps only Join Now in the header (the primary CTA); Log in
+  // moves to the drawer footer so the header stays uncrowded. Both
+  // buttons still render in the drawer for anonymous users.
   @media screen and (width <= $wbo-nav-mobile-breakpoint) {
-    &__join,
     &__login {
       display: none;
     }
