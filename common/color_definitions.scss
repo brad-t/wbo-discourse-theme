@@ -38,6 +38,11 @@ $redditish-border-highlight-color: $primary-200 !default;
   --wbo-blue-dim: rgba(19, 160, 236, 0.12);
   --wbo-orange-border: rgba(255, 121, 0, 0.2);
   --wbo-blue-border: rgba(19, 160, 236, 0.2);
+
+  // Backdrop painted behind the open composer (see scss/composer.scss).
+  // Same value as the mobile nav drawer's .wbo-nav-backdrop so both
+  // "something is in front of the page" states read identically.
+  --wbo-composer-scrim: rgba(0, 0, 0, 0.55);
 }
 
 @if not is-light-color-scheme() {

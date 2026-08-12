@@ -1,3 +1,44 @@
+// ── Composer backdrop ─────────────────────────────────────────────────────────
+//
+// The composer panel is --secondary on a --redditish-bg-color page, i.e. the
+// same fill as every topic-list card behind it, so on desktop it reads as one
+// more card rather than a foreground surface. Dim the page while it's open.
+//
+// Stacking: core pins #reply-control to z("composer", "content") = 400, and
+// every page-content layer sits under that (base 1, timeline 100,
+// chat-drawer 200, dropdown 300). 399 is the one slot above the page and
+// below the composer. Deliberately NOT dimmed: the WBO nav (1002),
+// .d-header-wrap (1100), and core's user cards / tooltips (500 / 600).
+// Reaching the nav would mean lifting the composer over the fixed chrome,
+// and that stack is owned by wbo-site-nav.scss -- not worth disturbing for
+// a 56px bar.
+//
+// pointer-events: none is load-bearing. Discourse's composer is docked, not
+// modal: you are meant to keep scrolling, quoting and clicking the topic
+// underneath while it's open. This layer is decoration only and must never
+// swallow a click.
+//
+// Below sm (40rem) core takes the composer fullscreen at z 1100, so the
+// scrim would be covered anyway -- don't paint it there.
+@media (width >= 40rem) {
+  html.composer-open:has(#reply-control.open:not(.fullscreen)) body::before {
+    content: "";
+    // display is load-bearing, not boilerplate. Core clearfixes <body>, so
+    // body::before already computes to display:table. position:fixed does
+    // NOT blockify a table box, and a table shrink-wraps -- inset:0 then
+    // resolves to a 0x0 box and the scrim renders nothing at all. Verified
+    // in the browser: without this line the rule computes exactly as
+    // written and still paints zero pixels.
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 399;
+    pointer-events: none;
+    background: var(--wbo-composer-scrim);
+    animation: wboFadeIn 0.2s ease; // defined in wbo-site-nav.scss
+  }
+}
+
 #reply-control {
   border-radius: 5px 5px 0 0;
   // Core sets border-color to a derived --primary-400 (rgb 56,56,56)
