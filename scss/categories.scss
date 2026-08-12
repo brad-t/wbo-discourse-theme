@@ -17,6 +17,20 @@
   }
 }
 
+// ── Hide the Tournaments category from discovery surfaces ────────────────────
+// Tournament discussion lives on the WordPress tournament pages; the Discourse
+// category is intentionally link-only. Its topics are unlisted (so Google gets
+// X-Robots-Tag: noindex) and the category is muted-by-default (so it stays out
+// of Latest and the sidebar) — but the /categories page still renders its card,
+// and muting doesn't remove it there. Hide it. Matched by slug via the category
+// link href, NOT the numeric id, so it works across environments (the id differs
+// between the dev and production forums; the "tournaments" slug does not).
+.category-list tr:has(a.category-title-link[href*="/c/tournaments/"]),
+.category-boxes .category-box:has(a[href*="/c/tournaments/"]),
+.category-boxes-with-topics .category-box:has(a[href*="/c/tournaments/"]) {
+  display: none;
+}
+
 .navigation-categories {
   #main-outlet-wrapper #main-outlet {
     grid-column-end: sidebar2;
