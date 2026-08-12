@@ -267,7 +267,8 @@ export default class WboSiteNav extends Component {
         .site-header / .site-header-inner split. }}
     <nav class="wbo-site-nav" aria-label="WBO site navigation">
       <div class="wbo-site-nav__inner">
-        <a href="https://worldbeyblade.org" class="wbo-site-nav__logo">
+        {{! TODO: swap back to https://worldbeyblade.org before deploying. }}
+        <a href="http://wbo.local" class="wbo-site-nav__logo">
           {{#if this.logoUrl}}
             {{! width/height are intrinsic (natural 512x166) so the browser
                 reserves the correct space before the image decodes -- without
@@ -336,7 +337,8 @@ export default class WboSiteNav extends Component {
       {{! Logo pinned in the drawer's top strip. The WBO nav-bar logo
           sits behind the drawer (z-index 1002 vs 1009) so it's hidden
           when the drawer is open; this fills that empty top strip. }}
-      <a href="https://worldbeyblade.org" class="wbo-nav-drawer__logo">
+      {{! TODO: swap back to https://worldbeyblade.org before deploying. }}
+      <a href="http://wbo.local" class="wbo-nav-drawer__logo">
         {{#if this.logoUrl}}
           <img src={{this.logoUrl}} alt="WBO" height="36" />
         {{else}}
