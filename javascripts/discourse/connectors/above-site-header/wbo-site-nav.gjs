@@ -302,25 +302,33 @@ export default class WboSiteNav extends Component {
     this.isDrawerOpen = false;
   }
 
+  // Discourse's outside-close listens on the document at mousedown /
+  // pointerdown / touchstart, all of which fire BEFORE `click`. Any of
+  // those bubbling from the bell would close an open user menu, and then
+  // our click-time proxy would reopen it. Snapshot the panel's open state
+  // at pointerdown and stop those events from bubbling to Discourse's
+  // outside-close listener. `click` then reads the snapshot to decide
+  // whether to toggle (menu was closed → open it) or stay quiet (menu was
+  // open → the tap counts as the close).
+  _wasMenuOpenAtPointerDown = false;
+
+  @action
+  bellPointerDown(event) {
+    this._wasMenuOpenAtPointerDown = !!document.querySelector(
+      ".user-menu.revamped, .hamburger-panel .user-menu"
+    );
+    event?.stopPropagation();
+  }
+
   @action
   openDiscourseUserMenu(event) {
-    // Bell button — proxy-clicks Discourse's own user-menu trigger (which
-    // is visually covered by our nav bar but stays live for this handoff).
-    // Opens the native panel: notifications, replies, likes, messages,
-    // bookmarks, review-queue, profile.
-    //
-    // Discourse's outside-click listener fires on mousedown (before our
-    // click handler), so a tap-on-open sequence goes:
-    //   mousedown → their outside-click closes the panel
-    //   click → our handler used to run btn.click() → reopens it
-    // Check the panel's presence first and skip the proxy click when it's
-    // already open; the outside-click has (or will) close it either way.
     event?.stopPropagation();
-    const menuOpen = !!document.querySelector(
-      ".user-menu.revamped, .menu-panel.revamped .user-menu"
-    );
-    if (menuOpen) {
-      return;
+    if (this._wasMenuOpenAtPointerDown) {
+      // The user tapped the bell to close an open panel. Close it by
+      // clicking the native trigger; without the pointerdown short-
+      // circuit above, this same click would have re-opened it after
+      // outside-close already fired.
+      this._wasMenuOpenAtPointerDown = false;
     }
     const btn =
       document.querySelector(
@@ -602,8 +610,14 @@ export default class WboSiteNav extends Component {
 
             {{! Bell — always visible; opens Discourse's own user menu
                 (notifications tab by default). Sits to the RIGHT of the
-                pill per design. }}
+                pill per design. pointerdown/mousedown/touchstart are
+                intercepted at capture-style timing so Discourse's own
+                outside-close (which runs on those events) never fires
+                on a bell tap; click alone drives the toggle. }}
             <button
+              {{on "pointerdown" this.bellPointerDown}}
+              {{on "mousedown" this.bellPointerDown}}
+              {{on "touchstart" this.bellPointerDown}}
               {{on "click" this.openDiscourseUserMenu}}
               type="button"
               class="wbo-bell"
