@@ -380,10 +380,18 @@ export default class WboSiteNav extends Component {
   // renamed these before.
   get unreadNotifications() {
     const u = this.currentUser;
+    if (!u) return 0;
+    // Prefer Discourse's combined counter when present. Otherwise sum
+    // the two Discourse split into a few releases back — high-priority
+    // (PMs, mentions) + regular (likes, replies) — so PMs don't fall
+    // out of the bell badge just because only high-priority notifications
+    // exist.
+    if (typeof u.all_unread_notifications_count === "number") {
+      return u.all_unread_notifications_count;
+    }
     return (
-      u?.all_unread_notifications_count ??
-      u?.unread_notifications ??
-      0
+      (u.unread_high_priority_notifications ?? 0) +
+      (u.unread_notifications ?? 0)
     );
   }
 
