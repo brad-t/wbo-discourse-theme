@@ -906,12 +906,18 @@ $wbo-nav-mobile-breakpoint: 719px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
-// On very narrow screens (mobile pill without name), anchor the panel to
-// the viewport edge so it can't overflow past the header's right padding.
-@media screen and (max-width: 480px) {
+// On mobile, anchor the panel to the VIEWPORT's right edge (not the
+// pill's) so the bell doesn't push it off-center, and cap its width so
+// it isn't drawer-sized on tablet-width screens.
+@media screen and (width <= $wbo-nav-mobile-breakpoint) {
   .wbo-user-menu-dropdown {
-    right: -8px;
-    min-width: min(280px, calc(100vw - 24px));
+    position: fixed;
+    top: calc(#{$wbo-nav-height} + 8px);
+    // 12px matches the WBO nav's mobile right padding (0.75em).
+    right: 12px;
+    left: auto;
+    min-width: 220px;
+    max-width: min(280px, calc(100vw - 24px));
   }
 }
 
