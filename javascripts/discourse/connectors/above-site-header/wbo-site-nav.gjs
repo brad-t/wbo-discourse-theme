@@ -303,11 +303,17 @@ export default class WboSiteNav extends Component {
   }
 
   @action
-  openDiscourseUserMenu() {
+  openDiscourseUserMenu(event) {
     // Bell button — proxy-clicks Discourse's own user-menu trigger (which
     // is visually covered by our nav bar but stays live for this handoff).
     // Opens the native panel: notifications, replies, likes, messages,
     // bookmarks, review-queue, profile.
+    //
+    // stopPropagation stops the bell click from also reaching Discourse's
+    // document-level outside-click handler; without it, an open menu would
+    // close on the bubbled click and immediately reopen on our synthetic
+    // trigger click, defeating the second tap.
+    event?.stopPropagation();
     const btn =
       document.querySelector(
         ".d-header-icons .header-dropdown-toggle.current-user button"
