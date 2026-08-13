@@ -485,19 +485,6 @@ export default class WboSiteNav extends Component {
 
         <div class="wbo-site-nav__right">
           {{#if this.currentUser}}
-            {{! Bell — always visible; opens Discourse's own user menu
-                (notifications tab by default). Sits to the LEFT of the
-                pill so the pill remains the rightmost element on both
-                sides of the site, matching WP. }}
-            <button
-              {{on "click" this.openDiscourseUserMenu}}
-              type="button"
-              class="wbo-bell"
-              aria-label="Notifications"
-            >
-              {{icon "bell"}}
-            </button>
-
             {{! Pill + custom dropdown — mirrors the WP .user-menu-wrap
                 markup so both sides share the same visual language. The
                 dropdown links out to WP for tournaments/settings and
@@ -598,6 +585,18 @@ export default class WboSiteNav extends Component {
                 </div>
               {{/if}}
             </div>
+
+            {{! Bell — always visible; opens Discourse's own user menu
+                (notifications tab by default). Sits to the RIGHT of the
+                pill per design. }}
+            <button
+              {{on "click" this.openDiscourseUserMenu}}
+              type="button"
+              class="wbo-bell"
+              aria-label="Notifications"
+            >
+              {{icon "bell"}}
+            </button>
           {{else}}
             {{! Two-button pair on desktop, matching the WP header. Log in
                 is hidden on mobile via SCSS; the drawer carries the pair. }}

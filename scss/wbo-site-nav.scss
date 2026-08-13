@@ -55,12 +55,14 @@ $wbo-nav-mobile-breakpoint: 719px;
 // stays visible (and tappable to close). We intentionally do NOT list
 // .sidebar-hamburger-dropdown / .hamburger-panel here — they're killed on
 // mobile below.
-@media screen and (width <= $wbo-nav-mobile-breakpoint) {
-  .menu-panel.revamped,
-  .user-menu {
-    top: $wbo-nav-height !important;
-    max-height: calc(100vh - #{$wbo-nav-height}) !important;
-  }
+// Pin the Discourse user menu (bell popup) to the bottom of the WBO nav
+// bar on every viewport. Discourse computes `top` from the header rect,
+// but the header is `visibility: hidden` under our custom nav so its
+// default lands with a small gap — this snaps it flush.
+.menu-panel.revamped,
+.user-menu {
+  top: $wbo-nav-height !important;
+  max-height: calc(100vh - #{$wbo-nav-height}) !important;
 }
 
 // ── Mobile: hide-and-lock the Discourse sidebar hamburger drawer ──────────────
