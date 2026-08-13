@@ -898,9 +898,14 @@ $wbo-nav-mobile-breakpoint: 719px;
   z-index: 1100;
   min-width: 240px;
   padding: 6px;
-  background: #0a1f4d;
+  // #0a1a3a matches WP's dark --elevated so the dropdown surface reads
+  // the same colour across the two halves of the site.
+  background: #0a1a3a;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  // Matches WP's --radius (10px). overflow:hidden clips item hover
+  // states to the rounded container so nothing paints past the corner.
+  border-radius: 10px;
+  overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
