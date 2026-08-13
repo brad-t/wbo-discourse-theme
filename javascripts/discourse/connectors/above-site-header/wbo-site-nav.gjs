@@ -621,9 +621,19 @@ export default class WboSiteNav extends Component {
               {{on "click" this.openDiscourseUserMenu}}
               type="button"
               class="wbo-bell"
-              aria-label="Notifications"
+              aria-label={{if
+                this.unreadNotifications
+                (concat "Notifications (" this.unreadNotifications " unread)")
+                "Notifications"
+              }}
             >
               {{icon "bell"}}
+              {{#if this.unreadNotifications}}
+                <span
+                  class="wbo-bell__badge"
+                  aria-hidden="true"
+                >{{this.unreadNotifications}}</span>
+              {{/if}}
             </button>
           {{else}}
             {{! Two-button pair on desktop, matching the WP header. Log in

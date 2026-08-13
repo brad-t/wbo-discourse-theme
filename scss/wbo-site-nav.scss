@@ -763,6 +763,8 @@ $wbo-nav-mobile-breakpoint: 719px;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.75);
   transition: background 0.15s, border-color 0.15s, color 0.15s;
+  // Anchor for the count pill overlaid on the top-right corner.
+  position: relative;
 
   &:hover,
   &:focus-visible {
@@ -770,6 +772,29 @@ $wbo-nav-mobile-breakpoint: 719px;
     border-color: rgba(255, 255, 255, 0.2);
     color: #fff;
     outline: none;
+  }
+
+  &__badge {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--wbo-orange);
+    color: #fff;
+    font-family: "Rubik", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 100px;
+    // Small stroke so the pill reads distinctly over the nav-bar bg
+    // even when the count is high-contrast on hover.
+    border: 2px solid $wbo-nav-bg;
+    box-sizing: content-box;
   }
 
   .d-icon {
