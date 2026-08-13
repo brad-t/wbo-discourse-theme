@@ -381,11 +381,23 @@ export default class WboSiteNav extends Component {
   get unreadNotifications() {
     const u = this.currentUser;
     if (!u) return 0;
-    // Prefer Discourse's combined counter when present. Otherwise sum
-    // the two Discourse split into a few releases back — high-priority
-    // (PMs, mentions) + regular (likes, replies) — so PMs don't fall
-    // out of the bell badge just because only high-priority notifications
-    // exist.
+
+    // `grouped_unread_notifications` is the per-type unread map Discourse
+    // maintains for the notification menu itself — keys are notification-
+    // type ids, values are counts. Summing it matches what the bell menu
+    // actually surfaces. `all_unread_notifications_count` on the same user
+    // has been observed at 0 while the groups map has real values (7 PMs
+    // + 1 group + 1 plugin = 9), so trust the map.
+    const grouped = u.grouped_unread_notifications;
+    if (grouped && typeof grouped === "object") {
+      let sum = 0;
+      for (const v of Object.values(grouped)) {
+        sum += Number(v) || 0;
+      }
+      return sum;
+    }
+
+    // Older releases: fall back to the split fields.
     if (typeof u.all_unread_notifications_count === "number") {
       return u.all_unread_notifications_count;
     }
