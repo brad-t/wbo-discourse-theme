@@ -65,13 +65,6 @@ $wbo-nav-mobile-breakpoint: 719px;
   max-height: calc(100vh - #{$wbo-nav-height}) !important;
 }
 
-// Site setting `show_user_menu_avatars` is on so notification rows use
-// Discourse's IconAvatar (avatar + small type-icon at bottom-right).
-// Drop the type-icon overlay per design — the avatar alone is enough
-// and matches the WP bell rows.
-.user-menu .icon-avatar__icon-wrapper {
-  display: none !important;
-}
 
 // ── Mobile: hide-and-lock the Discourse sidebar hamburger drawer ──────────────
 //
